@@ -20,8 +20,8 @@
       <InputText id="admin-level" v-if="userType === 'Admin'" v-model="adminLevel" placeholder="Admin Level"
                  :disabled="userType === 'Client'"/>
       <p v-if="warningMessage" class="warning-message">{{ warningMessage }}</p>
-      <Button label="Create" severity="success" @click="createUser"/>
-      <Button label="Update" severity="warn" @click="updateUser"/>
+      <Button label="Create" severity="success" @click="createUser" :disabled="!isFormValid"/>
+      <Button label="Update" severity="warn" @click="updateUser" :disabled="!isFormValid"/>
     </div>
     <div class="card-user-list">
       <h2 class="card-header">User List</h2>
@@ -52,7 +52,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import axios from 'axios';
 
-import {ref} from "vue";
+import {computed, ref} from "vue";
 
 const name = ref('');
 const surname = ref('');
@@ -76,33 +76,19 @@ let userDto = ref({
   userType: ''
 });
 
-const validateUserInput = () => {
-  warningMessage.value = '';
+const isFormValid = computed(() => {
+  if (!userType.value) return false;
 
-  if (!userType.value) {
-    warningMessage.value = 'Please choose user type.';
-    return false;
-  }
   const commonFields = [name.value, surname.value, username.value, password.value];
   if (userType.value === 'Client') {
     const clientSpecificFields = [dateOfBirth.value, address.value];
-    if (commonFields.some(field => !field) || clientSpecificFields.some(field => !field)) {
-      warningMessage.value = 'Please fill all the fields.';
-      return false;
-    }
+    return !commonFields.some(field => !field) && !clientSpecificFields.some(field => !field);
   } else {
-    if (commonFields.some(field => !field) || !adminLevel.value) {
-      warningMessage.value = 'Please fill all the fields.';
-      return false;
-    }
+    return !commonFields.some(field => !field) && adminLevel.value;
   }
-  return true;
-};
+});
 
 const createUser = async () => {
-  if (!validateUserInput()) {
-    return;
-  }
 
   userDto = {
     name: name.value,
@@ -146,9 +132,6 @@ const fetchUserData = async () => {
 }
 
 const updateUser = async () => {
-  if (!validateUserInput()) {
-    return;
-  }
 
   userDto = {
     name: name.value,

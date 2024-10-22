@@ -100,8 +100,13 @@ import AutoComplete from "primevue/autocomplete";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Dialog from "primevue/dialog";
-import axios from 'axios';
 import {computed, ref} from "vue";
+import {
+  getPublicationsService,
+  updatePublicationService,
+  deletePublicationService,
+  createPublicationService
+} from "@/service/ManagePublicationsService";
 
 const ownerUsername = ref('');
 const title = ref('');
@@ -164,7 +169,6 @@ const validateField = (field) => {
       warningMessages.value.ownerUsername = validators.onlyLetters(ownerUsername.value);
       break;
     case 'title':
-      warningMessages.value.title = title.value ? '' : 'Title is required.';
       break;
     case 'author':
       warningMessages.value.author = validators.onlyLetters(author.value);
@@ -206,11 +210,21 @@ const isFormValid = computed(() => {
   return noWarnings && allFieldsFilled;
 });
 
+const resetFormFields = () => {
+  ownerUsername.value = '';
+  title.value = '';
+  author.value = '';
+  price.value = '';
+  genre.value = '';
+  issueNumber.value = '';
+  illustrator.value = '';
+  selectedType.value = null;
+};
 
 const addPublication = async () => {
   if (!validateFormInput()) return;
 
-  publicationDto.value = {
+  publicationDto = {
     ownerUsername: ownerUsername.value,
     title: title.value,
     author: author.value,
@@ -222,46 +236,29 @@ const addPublication = async () => {
   };
 
   try {
-    const userCheckResponse = await axios.get(`/api/users/${ownerUsername.value}`);
-    console.log("User found successfully", userCheckResponse);
-    if (userCheckResponse.data) {
-      const response = await axios.post('/api/publications', publicationDto.value)
-      console.log("Publication created successfully", response);
-    }
+    await createPublicationService(publicationDto, ownerUsername.value);
+    await loadPublications();
+    resetFormFields();
   } catch (error) {
-    warningMessage.value = 'Owner with entered username does not exist!';
-  } finally {
-    await fetchPublicationData();
-    ownerUsername.value = '';
-    title.value = '';
-    author.value = '';
-    price.value = '';
-    genre.value = '';
-    issueNumber.value = '';
-    illustrator.value = '';
-    selectedType.value = '';
+    warningMessage.value = error.message;
   }
-}
+};
+
 
 const deletePublication = async (publicationId) => {
   try {
-    const response = await axios.delete(`/api/publications/${publicationId}`);
-    console.log("Publication deleted successfully", response.data);
+    await deletePublicationService(publicationId);
+    await loadPublications();
   } catch (error) {
-    console.log(publicationId)
     console.error("Error deleting publication: ", error.message);
-  } finally {
-    await fetchPublicationData();
   }
-}
+};
 
-const fetchPublicationData = async () => {
+const loadPublications = async () => {
   try {
-    const response = await axios.get('/api/publications');
-    console.log('Fetched publications:', response.data);
-    publications.value = response.data;
+    await getPublicationsService(publications);
   } catch (error) {
-    console.error('Error fetching publications:', error);
+    console.log(error.message);
   }
 }
 
@@ -272,17 +269,17 @@ const openEditDialog = async (publicationToEditData) => {
 
 const savePublication = async () => {
   try {
-    console.log("Publication updated successfully", publicationToEdit.value);
-    const response = await axios.put(`/api/publications/${publicationToEdit.value.id}`, publicationToEdit.value);
-    console.log("Publication updated successfully", response.data);
-    visibleDialog.value = false;
-    await fetchPublicationData();
+    if (publicationToEdit.value) {
+      await updatePublicationService(publicationToEdit.value);
+      visibleDialog.value = false;
+      await loadPublications();
+    }
   } catch (error) {
-    console.error("Error updating publication: ", error.message);
+    console.log(error.message);
   }
 };
 
-fetchPublicationData();
+loadPublications();
 </script>
 
 <style>
