@@ -89,9 +89,9 @@
         <Button type="button" label="Save" @click="savePublication"></Button>
       </div>
     </Dialog>
-    <Dialog v-model:visible="showWarningDialog" header="Warning" :modal="true" :closable="false">
-      <p>Client with this username does not exist</p>
-      <Button label="OK" @click="showWarningDialog = false" />
+    <Dialog v-model:visible="showDialog" header="Warning" :modal="true" :closable="false">
+      <p>{{ dialogMessage }}</p>
+      <Button label="OK" @click="showDialog = false"/>
     </Dialog>
   </div>
 
@@ -124,7 +124,8 @@ const warningMessage = ref('');
 const publications = ref([]);
 const publicationToEdit = ref(null);
 const visibleDialog = ref(false);
-const showWarningDialog = ref(false);
+const showDialog = ref(false);
+const dialogMessage = ref('');
 
 const warningMessages = ref({
   ownerUsername: '',
@@ -244,7 +245,8 @@ const addPublication = async () => {
     await createPublicationService(publicationDto, ownerUsername.value);
     await loadPublications();
   } catch (error) {
-    showWarningDialog.value = true;
+    dialogMessage.value = 'Client ' + `${ownerUsername.value}` + ' does not exist.';
+    showDialog.value = true;
   } finally {
     resetFormFields();
   }
@@ -256,7 +258,8 @@ const deletePublication = async (publicationId) => {
     await deletePublicationService(publicationId);
     await loadPublications();
   } catch (error) {
-    console.error("Error deleting publication: ", error.message);
+    dialogMessage.value = 'Server error deleting publications';
+    showDialog.value = true;
   }
 };
 
@@ -264,7 +267,8 @@ const loadPublications = async () => {
   try {
     await getPublicationsService(publications);
   } catch (error) {
-    console.log(error.message);
+    dialogMessage.value = 'Server error loading publications.';
+    showDialog.value = true;
   }
 }
 
@@ -278,10 +282,12 @@ const savePublication = async () => {
     if (publicationToEdit.value) {
       await updatePublicationService(publicationToEdit.value);
       visibleDialog.value = false;
-      await loadPublications();
     }
   } catch (error) {
-    console.log(error.message);
+    dialogMessage.value = 'Server error editing publication.';
+    showDialog.value = true;
+  } finally {
+    await loadPublications();
   }
 };
 

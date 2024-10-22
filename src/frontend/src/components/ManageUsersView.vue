@@ -45,9 +45,9 @@
     </div>
   </div>
 
-  <Dialog v-model:visible="showWarningDialog" header="Warning" :modal="true" :closable="false">
-    <p>Username is already taken.</p>
-    <Button label="OK" @click="showWarningDialog = false" />
+  <Dialog v-model:visible="showDialog" header="Warning" :modal="true" :closable="false">
+    <p>{{ dialogMessage }}</p>
+    <Button label="OK" @click="showDialog = false" />
   </Dialog>
 </template>
 <script setup>
@@ -73,7 +73,8 @@ const adminLevel = ref('');
 const dateOfBirth = ref('');
 const userType = ref('');
 const users = ref([]);
-const showWarningDialog = ref(false);
+const showDialog = ref(false);
+const dialogMessage = ref('');
 
 let userDto = ref({
   name: '',
@@ -139,8 +140,8 @@ const createUser = async () => {
     const response = await axios.post('/api/users', userDto);
     console.log("User created", response.data);
   } catch (error){
-    // console.log("User exists: ", error);
-    showWarningDialog.value = true;
+    dialogMessage.value('Username is already taken');
+    showDialog.value = true;
   } finally {
     name.value = '';
     surname.value = '';
@@ -158,10 +159,10 @@ const createUser = async () => {
 const fetchUserData = async () => {
   try {
     const response = await axios.get('/api/users');
-    console.log('Fetched users:', response.data);
     users.value = response.data;
   } catch (error) {
-    console.error('Error fetching users:', error);
+    dialogMessage.value = "Error fetching user data."
+    showDialog.value = true;
   }
 }
 
@@ -180,22 +181,14 @@ const updateUser = async () => {
 
   try {
     const userCheckResponse = await axios.get(`/api/users/${username.value}`);
-
     if (userCheckResponse.data) {
-      console.log('User found:', userCheckResponse.data);
-
-      const response = await axios.put(`/api/users/${username.value}`, userDto);
-      console.log('User updated:', response.data);
-
-    } else {
-      console.warn('User with that username does not exist.');
+      await axios.put(`/api/users/${username.value}`, userDto);
+      dialogMessage.value = "User created successfully.";
+      showDialog.value = true;
     }
   } catch (error) {
-    if (error.response) {
-      console.error('Error updating user:', error.response.data);
-    } else {
-      console.error('Error updating user:', error.message);
-    }
+    dialogMessage.value = "User " + `${username.value}` + " does not exist.";
+    showDialog.value = true;
   } finally {
     await fetchUserData();
   }
@@ -203,24 +196,16 @@ const updateUser = async () => {
 
 const deleteUser = async (usernameToDelete) => {
   try {
-    const response = await axios.delete(`/api/users/${usernameToDelete}`)
-    console.log('User deleted:', response.data);
-    await fetchUserData();
+    await axios.delete(`/api/users/${usernameToDelete}`)
+    dialogMessage.value = "User deleted successfully."
+    showDialog.value = true;
   } catch (error) {
-    console.log('Deleting user with username:', usernameToDelete);
-    console.error('Error deleting user:', error);
+    dialogMessage.value = "An error occurred while deleting the user."
+    showDialog.value = true;
+  } finally {
+    await fetchUserData();
   }
 }
-
-// const validateOnlyLetters = (value) => {
-//   const isValid = /^[A-Za-z]*$/.test(value);
-//   return isValid ? '' : 'Only letters are allowed!';
-// };
-//
-// const validateOnlyNumbers = (value) => {
-//   const isValid = /^\d*\.?\d*$/.test(value); // Allows decimals
-//   return isValid ? '' : 'Only numbers and a dot are allowed!';
-// };
 
 fetchUserData();
 
