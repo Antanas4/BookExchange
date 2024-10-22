@@ -2,32 +2,45 @@
   <h1 class="page-header">Manage Publications</h1>
   <div class="container">
     <div class="form">
+
+      <FloatLabel>
+
+      </FloatLabel>
+
+      <label for="author" class="dialog-label">Author</label>
       <InputText v-model="ownerUsername" placeholder="Enter Publications Owner Username"
                  @input="validateField('ownerUsername', 'form')"/>
       <p v-if="formInputWarning.ownerUsername" class="warning-message">{{ formInputWarning.ownerUsername }}</p>
 
+      <label for="title" class="dialog-label">Title</label>
       <InputText v-model="title" placeholder="Enter Title" @input="validateField('title', 'form')"/>
       <p v-if="formInputWarning.title" class="warning-message">{{ formInputWarning.title }}</p>
 
+      <label for="author" class="dialog-label">Author</label>
       <InputText v-model="author" placeholder="Enter Author Name" @input="validateField('author', 'form')"/>
       <p v-if="formInputWarning.author" class="warning-message">{{ formInputWarning.author }}</p>
 
+      <label for="price" class="dialog-label">Price</label>
       <InputText v-model="price" placeholder="Enter Price" @input="validateField('price', 'form')"/>
       <p v-if="formInputWarning.price" class="warning-message">{{ formInputWarning.price }}</p>
 
+      <label for="Publication type" class="dialog-label">Publication Type</label>
       <AutoComplete v-model="selectedType" :suggestions="filteredTypes" @complete="searchTypes"
                     :virtualScrollerOptions="{ itemSize: 38 }" optionLabel="label" dropdown forceSelection
                     placeholder="Select Publication Type"/>
 
+      <label v-if="selectedType?.label === 'Magazine'" for="issueNumber" class="dialog-label">Issue Number</label>
       <InputText v-if="selectedType?.label === 'Magazine'" v-model="issueNumber"
                  placeholder="Enter Magazine's Issue Number" @input="validateField('issueNumber', 'form')"/>
       <p v-if="formInputWarning.issueNumber" class="warning-message">{{ formInputWarning.issueNumber }}</p>
 
+      <label v-if="selectedType?.label === 'Comic Book'" for="illustrator" class="dialog-label">Illustrator</label>
       <InputText v-if="selectedType?.label === 'Comic Book'" v-model="illustrator"
                  placeholder="Enter Comic Book's illustrator" @input="validateField('illustrator', 'form')"/>
       <p v-if="formInputWarning.illustrator" class="warning-message">{{ formInputWarning.illustrator }}</p>
 
-      <InputText v-if="selectedType?.label === 'Book'" v-model="genre" placeholder="Enter Book's genre"
+      <label v-if="selectedType?.label === 'Book'" for="genre" class="dialog-label">Genre</label>
+      <InputText v-if="selectedType?.label === 'Book'" v-model="genre" placeholder="Enter Book's Genre"
                  @input="validateField('genre', 'form')"/>
       <p v-if="formInputWarning.genre" class="warning-message">{{ formInputWarning.genre }}</p>
 
@@ -385,7 +398,7 @@ loadPublications();
 }
 
 .edit-publication-dialog {
-  width: 25rem;
+  width: 35rem;
 }
 
 .dialog-input-group {
