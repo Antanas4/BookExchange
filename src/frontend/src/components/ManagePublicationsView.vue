@@ -89,6 +89,10 @@
         <Button type="button" label="Save" @click="savePublication"></Button>
       </div>
     </Dialog>
+    <Dialog v-model:visible="showWarningDialog" header="Warning" :modal="true" :closable="false">
+      <p>Client with this username does not exist</p>
+      <Button label="OK" @click="showWarningDialog = false" />
+    </Dialog>
   </div>
 
 </template>
@@ -120,6 +124,7 @@ const warningMessage = ref('');
 const publications = ref([]);
 const publicationToEdit = ref(null);
 const visibleDialog = ref(false);
+const showWarningDialog = ref(false);
 
 const warningMessages = ref({
   ownerUsername: '',
@@ -238,9 +243,10 @@ const addPublication = async () => {
   try {
     await createPublicationService(publicationDto, ownerUsername.value);
     await loadPublications();
-    resetFormFields();
   } catch (error) {
-    warningMessage.value = error.message;
+    showWarningDialog.value = true;
+  } finally {
+    resetFormFields();
   }
 };
 

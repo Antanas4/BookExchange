@@ -10,8 +10,13 @@
         <RadioButton v-model="userType" inputId="is-admin" name="userType" value="Admin"/>
         <label for="is-admin" class="ml-2">Admin</label>
       </div>
-      <InputText id="name" v-model="name" placeholder="Enter Name"/>
-      <InputText id="surname" v-model="surname" placeholder="Enter Surname"/>
+
+      <InputText id="name" v-model="name" placeholder="Enter Name" @input="validateField('name')"/>
+      <p v-if="warningMessages.name" class="warning-message">{{ warningMessages.name }}</p>
+
+      <InputText id="surname" v-model="surname" placeholder="Enter Surname" @input="validateField('surname')"/>
+      <p v-if="warningMessages.surname" class="warning-message">{{ warningMessages.surname }}</p>
+
       <InputText id="username" v-model="username" placeholder="Enter Username"/>
       <Password id="password" v-model="password" :feedback="false" placeholder="Enter Password"/>
       <DatePicker v-if="userType === 'Client'" v-model="dateOfBirth" showIcon fluid iconDisplay="input" placeholder="Enter Date Of Birth"
@@ -19,7 +24,6 @@
       <InputText id="address" v-if="userType === 'Client'" v-model="address" placeholder="Enter Address" :disabled="userType === 'Admin'"/>
       <InputText id="admin-level" v-if="userType === 'Admin'" v-model="adminLevel" placeholder="Admin Level"
                  :disabled="userType === 'Client'"/>
-      <p v-if="warningMessage" class="warning-message">{{ warningMessage }}</p>
       <Button label="Create" severity="success" @click="createUser" :disabled="!isFormValid"/>
       <Button label="Update" severity="warn" @click="updateUser" :disabled="!isFormValid"/>
     </div>
@@ -40,6 +44,11 @@
       </DataTable>
     </div>
   </div>
+
+  <Dialog v-model:visible="showWarningDialog" header="Warning" :modal="true" :closable="false">
+    <p>Username is already taken.</p>
+    <Button label="OK" @click="showWarningDialog = false" />
+  </Dialog>
 </template>
 <script setup>
 
@@ -50,6 +59,7 @@ import Button from 'primevue/button';
 import RadioButton from 'primevue/radiobutton';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Dialog from "primevue/dialog";
 import axios from 'axios';
 
 import {computed, ref} from "vue";
@@ -63,7 +73,7 @@ const adminLevel = ref('');
 const dateOfBirth = ref('');
 const userType = ref('');
 const users = ref([]);
-const warningMessage = ref('');
+const showWarningDialog = ref(false);
 
 let userDto = ref({
   name: '',
@@ -76,15 +86,39 @@ let userDto = ref({
   userType: ''
 });
 
+const warningMessages = ref({
+  name:'',
+  surname:'',
+});
+
+const validators = {
+  onlyLetters: (value) => /^[A-Za-z]*$/.test(value) ? '' : 'Only letters are allowed!',
+};
+
+const validateField = (field) => {
+  switch (field) {
+    case 'name':
+      warningMessages.value.name = validators.onlyLetters(name.value);
+      break;
+    case 'surname':
+      warningMessages.value.surname = validators.onlyLetters(surname.value);
+      break;
+    default:
+      break;
+  }
+};
+
 const isFormValid = computed(() => {
   if (!userType.value) return false;
 
   const commonFields = [name.value, surname.value, username.value, password.value];
+  const noWarnings = Object.values(warningMessages.value).every(message => !message);
+
   if (userType.value === 'Client') {
     const clientSpecificFields = [dateOfBirth.value, address.value];
-    return !commonFields.some(field => !field) && !clientSpecificFields.some(field => !field);
+    return !commonFields.some(field => !field) && !clientSpecificFields.some(field => !field) && noWarnings;
   } else {
-    return !commonFields.some(field => !field) && adminLevel.value;
+    return !commonFields.some(field => !field) && adminLevel.value && noWarnings;
   }
 });
 
@@ -105,8 +139,8 @@ const createUser = async () => {
     const response = await axios.post('/api/users', userDto);
     console.log("User created", response.data);
   } catch (error){
-    console.log("User exists: ", error);
-    warningMessage.value = 'User with this username already exists';
+    // console.log("User exists: ", error);
+    showWarningDialog.value = true;
   } finally {
     name.value = '';
     surname.value = '';
