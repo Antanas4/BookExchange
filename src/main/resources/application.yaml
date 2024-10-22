@@ -1,0 +1,16 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  application:
+    name: BookExchange
+  jpa:
+    properties:
+      hibernate:
+        format_sql: 'true'
+    hibernate:
+      ddl-auto: update
+    show-sql: 'true'
