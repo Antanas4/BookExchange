@@ -17,7 +17,9 @@
       <InputText id="surname" v-model="surname" placeholder="Enter Surname" @input="validateField('surname')"/>
       <p v-if="warningMessages.surname" class="warning-message">{{ warningMessages.surname }}</p>
 
-      <InputText id="username" v-model="username" placeholder="Enter Username"/>
+      <InputText id="username" v-model="username" placeholder="Enter Username" @input="validateField('username')"/>
+      <p v-if="warningMessages.username" class="warning-message">{{ warningMessages.username }}</p>
+
       <Password id="password" v-model="password" :feedback="false" placeholder="Enter Password"/>
       <DatePicker v-if="userType === 'Client'" v-model="dateOfBirth" showIcon fluid iconDisplay="input" placeholder="Enter Date Of Birth"
                   :disabled="userType === 'Admin'"/>
@@ -94,6 +96,7 @@ const warningMessages = ref({
 
 const validators = {
   onlyLetters: (value) => /^[A-Za-z]*$/.test(value) ? '' : 'Only letters are allowed!',
+  usernameValidator: (value) => /^[A-Za-z0-9!@#$%^&*()_+=-]*$/.test(value) ? '' : 'Username can contain letters, numbers, and special characters!'
 };
 
 const validateField = (field) => {
@@ -103,6 +106,9 @@ const validateField = (field) => {
       break;
     case 'surname':
       warningMessages.value.surname = validators.onlyLetters(surname.value);
+      break;
+    case 'username':
+      warningMessages.value.username = validators.usernameValidator(username.value);
       break;
     default:
       break;

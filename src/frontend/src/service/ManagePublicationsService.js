@@ -9,7 +9,7 @@ export const createPublicationService = async (publicationDto, ownerUsername) =>
             await axios.post(PUBLICATIONS_URL, publicationDto);
         }
     } catch (error) {
-        throw new Error('Owner with entered username does not exist!');
+        throw new Error;
     }
 }
 
@@ -18,7 +18,7 @@ export const getPublicationsService = async (publications) => {
         const response = await axios.get(PUBLICATIONS_URL);
         publications.value = response.data;
     } catch (error) {
-        throw new Error('Failed to fetch publications');
+        throw new Error;
     }
 };
 
@@ -26,7 +26,7 @@ export const updatePublicationService = async (publication) => {
     try {
         await axios.put(`${PUBLICATIONS_URL}/${publication.id}`, publication);
     } catch (error) {
-        throw new Error('Failed to update publication');
+        throw new Error;
     }
 };
 
@@ -34,6 +34,6 @@ export const deletePublicationService = async (publicationId) => {
     try {
         await axios.delete(`${PUBLICATIONS_URL}/${publicationId}`);
     } catch (error) {
-        throw new Error('Failed to delete publication');
+        throw new Error;
     }
 };

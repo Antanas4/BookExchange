@@ -3,36 +3,36 @@
   <div class="container">
     <div class="form">
       <InputText v-model="ownerUsername" placeholder="Enter Publications Owner Username"
-                 @input="validateField('ownerUsername')"/>
-      <p v-if="warningMessages.ownerUsername" class="warning-message">{{ warningMessages.ownerUsername }}</p>
+                 @input="validateField('ownerUsername', 'form')"/>
+      <p v-if="formInputWarning.ownerUsername" class="warning-message">{{ formInputWarning.ownerUsername }}</p>
 
-      <InputText v-model="title" placeholder="Enter Title" @input="validateField('title')"/>
-      <p v-if="warningMessages.title" class="warning-message">{{ warningMessages.title }}</p>
+      <InputText v-model="title" placeholder="Enter Title" @input="validateField('title', 'form')"/>
+      <p v-if="formInputWarning.title" class="warning-message">{{ formInputWarning.title }}</p>
 
-      <InputText v-model="author" placeholder="Enter Author Name" @input="validateField('author')"/>
-      <p v-if="warningMessages.author" class="warning-message">{{ warningMessages.author }}</p>
+      <InputText v-model="author" placeholder="Enter Author Name" @input="validateField('author', 'form')"/>
+      <p v-if="formInputWarning.author" class="warning-message">{{ formInputWarning.author }}</p>
 
-      <InputText v-model="price" placeholder="Enter Price" @input="validateField('price')"/>
-      <p v-if="warningMessages.price" class="warning-message">{{ warningMessages.price }}</p>
+      <InputText v-model="price" placeholder="Enter Price" @input="validateField('price', 'form')"/>
+      <p v-if="formInputWarning.price" class="warning-message">{{ formInputWarning.price }}</p>
 
       <AutoComplete v-model="selectedType" :suggestions="filteredTypes" @complete="searchTypes"
                     :virtualScrollerOptions="{ itemSize: 38 }" optionLabel="label" dropdown forceSelection
                     placeholder="Select Publication Type"/>
 
       <InputText v-if="selectedType?.label === 'Magazine'" v-model="issueNumber"
-                 placeholder="Enter Magazine's Issue Number" @input="validateField('issueNumber')"/>
-      <p v-if="warningMessages.issueNumber" class="warning-message">{{ warningMessages.issueNumber }}</p>
+                 placeholder="Enter Magazine's Issue Number" @input="validateField('issueNumber', 'form')"/>
+      <p v-if="formInputWarning.issueNumber" class="warning-message">{{ formInputWarning.issueNumber }}</p>
 
       <InputText v-if="selectedType?.label === 'Comic Book'" v-model="illustrator"
-                 placeholder="Enter Comic Book's illustrator" @input="validateField('illustrator')"/>
-      <p v-if="warningMessages.illustrator" class="warning-message">{{ warningMessages.illustrator }}</p>
+                 placeholder="Enter Comic Book's illustrator" @input="validateField('illustrator', 'form')"/>
+      <p v-if="formInputWarning.illustrator" class="warning-message">{{ formInputWarning.illustrator }}</p>
 
       <InputText v-if="selectedType?.label === 'Book'" v-model="genre" placeholder="Enter Book's genre"
-                 @input="validateField('genre')"/>
-      <p v-if="warningMessages.genre" class="warning-message">{{ warningMessages.genre }}</p>
+                 @input="validateField('genre', 'form')"/>
+      <p v-if="formInputWarning.genre" class="warning-message">{{ formInputWarning.genre }}</p>
 
       <p v-if="warningMessage" class="warning-message">{{ warningMessage }}</p>
-      <Button label="Add Book" severity="success" @click="addPublication" :disabled="!isFormValid"/>
+      <Button label="Add Publication" severity="success" @click="addPublication" :disabled="!isFormValid"/>
     </div>
 
     <div class="card-publication-list">
@@ -56,37 +56,49 @@
     <Dialog v-model:visible="visibleDialog" modal header="Edit Publication" class="edit-publication-dialog">
       <div class="dialog-input-group">
         <label for="author" class="dialog-label">Author</label>
-        <InputText id="author" v-model="publicationToEdit.author" class="dialog-input" autocomplete="off"/>
+        <InputText id="author" v-model="publicationToEdit.author" class="dialog-input" autocomplete="off"
+                   @input="validateField('author', 'dialog')"/>
+        <p v-if="dialogInputWarning.author" class="warning-message">{{ dialogInputWarning.author }}</p>
       </div>
 
       <div class="dialog-input-group">
         <label for="title" class="dialog-label">Title</label>
-        <InputText id="title" v-model="publicationToEdit.title" class="dialog-input" autocomplete="off"/>
+        <InputText id="title" v-model="publicationToEdit.title" class="dialog-input" autocomplete="off"
+                   @input="validateField('title', 'dialog')"/>
+        <p v-if="dialogInputWarning.title" class="warning-message">{{ dialogInputWarning.title }}</p>
       </div>
 
       <div class="dialog-input-group">
         <label for="price" class="dialog-label">Price</label>
-        <InputText id="price" v-model="publicationToEdit.price" class="dialog-input" autocomplete="off"/>
+        <InputText id="price" v-model="publicationToEdit.price" class="dialog-input" autocomplete="off"
+                   @input="validateField('price', 'dialog')"/>
+        <p v-if="dialogInputWarning.price" class="warning-message">{{ dialogInputWarning.price }}</p>
       </div>
 
       <div class="dialog-input-group" v-if="publicationToEdit.publicationType === 'Magazine'">
         <label for="issueNumber" class="dialog-label">Issue Number</label>
-        <InputText id="issueNumber" v-model="publicationToEdit.issueNumber" class="dialog-input" autocomplete="off"/>
+        <InputText id="issueNumber" v-model="publicationToEdit.issueNumber" class="dialog-input" autocomplete="off"
+                   @input="validateField('issueNumber', 'dialog')"/>
+        <p v-if="dialogInputWarning.issueNumber" class="warning-message">{{ dialogInputWarning.issueNumber }}</p>
       </div>
 
       <div class="dialog-input-group" v-if="publicationToEdit.publicationType === 'Comic Book'">
         <label for="illustrator" class="dialog-label">Illustrator</label>
-        <InputText id="illustrator" v-model="publicationToEdit.illustrator" class="dialog-input" autocomplete="off"/>
+        <InputText id="illustrator" v-model="publicationToEdit.illustrator" class="dialog-input" autocomplete="off"
+                   @input="validateField('illustrator', 'dialog')"/>
+        <p v-if="dialogInputWarning.illustrator" class="warning-message">{{ dialogInputWarning.illustrator }}</p>
       </div>
 
       <div class="dialog-input-group" v-if="publicationToEdit.publicationType === 'Book'">
         <label for="genre" class="dialog-label">Genre</label>
-        <InputText id="genre" v-model="publicationToEdit.genre" class="dialog-input" autocomplete="off"/>
+        <InputText id="genre" v-model="publicationToEdit.genre" class="dialog-input" autocomplete="off"
+                   @input="validateField('genre', 'dialog')"/>
+        <p v-if="dialogInputWarning.genre" class="warning-message">{{ dialogInputWarning.genre }}</p>
       </div>
 
       <div class="dialog-button-group">
         <Button type="button" label="Cancel" severity="secondary" @click="visibleDialog = false"></Button>
-        <Button type="button" label="Save" @click="savePublication"></Button>
+        <Button type="button" label="Save" @click="savePublication" :disabled="!isDialogValid"></Button>
       </div>
     </Dialog>
     <Dialog v-model:visible="showDialog" header="Warning" :modal="true" :closable="false">
@@ -127,8 +139,16 @@ const visibleDialog = ref(false);
 const showDialog = ref(false);
 const dialogMessage = ref('');
 
-const warningMessages = ref({
+const formInputWarning = ref({
   ownerUsername: '',
+  title: '',
+  author: '',
+  price: '',
+  genre: '',
+  issueNumber: '',
+  illustrator: '',
+});
+const dialogInputWarning = ref({
   title: '',
   author: '',
   price: '',
@@ -165,39 +185,56 @@ const searchTypes = (event) => {
 }
 
 const validators = {
+  usernameValidator: (value) => /^[A-Za-z0-9!@#$%^&*()_+=-]*$/.test(value) ? '' : 'Username can contain letters, numbers, and special characters!',
+  onlyLettersAndSpaces: (value) => /^[A-Za-z\s]*$/.test(value) ? '' : 'Only letters and spaces are allowed!',
   onlyLetters: (value) => /^[A-Za-z]*$/.test(value) ? '' : 'Only letters are allowed!',
-  onlyNumbers: (value) => /^\d*\.?\d*$/.test(value) ? '' : 'Only numbers and a dot are allowed!',
+  onlyNumbersAndDot: (value) => /^\d*\.?\d*$/.test(value) ? '' : 'Only numbers and a dot are allowed!',
 };
 
-const validateField = (field) => {
+const validateField = (field, context) => {
+  const warningObj = context === 'dialog' ? dialogInputWarning.value : formInputWarning.value;
+
   switch (field) {
     case 'ownerUsername':
-      warningMessages.value.ownerUsername = validators.onlyLetters(ownerUsername.value);
+      warningObj.ownerUsername = validators.usernameValidator(ownerUsername.value);
       break;
     case 'title':
       break;
     case 'author':
-      warningMessages.value.author = validators.onlyLetters(author.value);
+      warningObj.author = context === 'form' ? validators.onlyLettersAndSpaces(author.value) : validators.onlyLettersAndSpaces(publicationToEdit.value.author);
       break;
     case 'price':
-      warningMessages.value.price = validators.onlyNumbers(price.value);
+      warningObj.price = context === 'form' ? validators.onlyNumbersAndDot(price.value) : validators.onlyNumbersAndDot(publicationToEdit.value.price);
       break;
     case 'issueNumber':
-      warningMessages.value.issueNumber = selectedType.value?.label === 'Magazine' ? validators.onlyNumbers(issueNumber.value) : '';
+      if (context === 'dialog' && publicationToEdit.value.publicationType === 'Magazine') {
+        warningObj.issueNumber = validators.onlyNumbersAndDot(publicationToEdit.value.issueNumber);
+      } else {
+        warningObj.issueNumber = selectedType.value?.label === 'Magazine' ? validators.onlyNumbersAndDot(issueNumber.value) : '';
+      }
       break;
     case 'illustrator':
-      warningMessages.value.illustrator = selectedType.value?.label === 'Comic Book' ? validators.onlyLetters(illustrator.value) : '';
+      if (context === 'dialog' && publicationToEdit.value.publicationType === 'Comic Book') {
+        warningObj.illustrator = validators.onlyLettersAndSpaces(publicationToEdit.value.illustrator);
+      } else {
+        warningObj.illustrator = selectedType.value?.label === 'Comic Book' ? validators.onlyLetters(illustrator.value) : '';
+      }
       break;
     case 'genre':
-      warningMessages.value.genre = selectedType.value?.label === 'Book' ? validators.onlyLetters(genre.value) : '';
+      if (context === 'dialog' && publicationToEdit.value.publicationType === 'Book') {
+        warningObj.genre = validators.onlyLettersAndSpaces(publicationToEdit.value.genre);
+      } else {
+        warningObj.genre = selectedType.value?.label === 'Book' ? validators.onlyLetters(genre.value) : '';
+      }
       break;
     default:
       break;
   }
 };
 
+
 const validateFormInput = () => {
-  Object.values(warningMessages.value).forEach(message => {
+  Object.values(formInputWarning.value).forEach(message => {
     if (message) {
       warningMessage.value = 'Please fix the highlighted errors before submitting.';
       return false;
@@ -208,11 +245,24 @@ const validateFormInput = () => {
 };
 
 const isFormValid = computed(() => {
-  const noWarnings = Object.values(warningMessages.value).every(message => !message);
+  const noWarnings = Object.values(formInputWarning.value).every(message => !message);
   const allFieldsFilled = ownerUsername.value && title.value && author.value && price.value && selectedType.value &&
       (selectedType.value.label !== 'Book' || genre.value) &&
       (selectedType.value.label !== 'Magazine' || issueNumber.value) &&
       (selectedType.value.label !== 'Comic Book' || illustrator.value);
+  return noWarnings && allFieldsFilled;
+});
+
+const isDialogValid = computed(() => {
+  const noWarnings = Object.values(dialogInputWarning.value).every(message => !message);
+  const allFieldsFilled = publicationToEdit.value &&
+      publicationToEdit.value.author &&
+      publicationToEdit.value.title &&
+      publicationToEdit.value.price &&
+      (publicationToEdit.value.publicationType !== 'Book' || publicationToEdit.value.genre) &&
+      (publicationToEdit.value.publicationType !== 'Magazine' || publicationToEdit.value.issueNumber) &&
+      (publicationToEdit.value.publicationType !== 'Comic Book' || publicationToEdit.value.illustrator);
+
   return noWarnings && allFieldsFilled;
 });
 
@@ -258,7 +308,7 @@ const deletePublication = async (publicationId) => {
     await deletePublicationService(publicationId);
     await loadPublications();
   } catch (error) {
-    dialogMessage.value = 'Server error deleting publications';
+    dialogMessage.value = 'Failed to delete publication.';
     showDialog.value = true;
   }
 };
@@ -267,24 +317,26 @@ const loadPublications = async () => {
   try {
     await getPublicationsService(publications);
   } catch (error) {
-    dialogMessage.value = 'Server error loading publications.';
+    dialogMessage.value = 'Failed to fetch publications.';
     showDialog.value = true;
   }
 }
 
 const openEditDialog = async (publicationToEditData) => {
-  publicationToEdit.value = publicationToEditData;
+  publicationToEdit.value = JSON.parse(JSON.stringify(publicationToEditData));
   visibleDialog.value = true;
+
 }
 
 const savePublication = async () => {
+
   try {
     if (publicationToEdit.value) {
       await updatePublicationService(publicationToEdit.value);
       visibleDialog.value = false;
     }
   } catch (error) {
-    dialogMessage.value = 'Server error editing publication.';
+    dialogMessage.value = 'Failed to update publication';
     showDialog.value = true;
   } finally {
     await loadPublications();
