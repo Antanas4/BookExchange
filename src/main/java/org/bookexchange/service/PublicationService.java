@@ -21,7 +21,6 @@ public class PublicationService {
     private final PublicationRepository publicationRepository;
 
     public void createPublication(PublicationDto publicationDto) {
-        System.out.println("PublicationDto: " + publicationDto);
         Client client = clientRepository.findByUsername(publicationDto.getOwnerUsername())
                 .orElseThrow(() -> new RuntimeException("Client not found"));
         Publication publication;

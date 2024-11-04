@@ -189,7 +189,7 @@ const updateUser = async () => {
     const userCheckResponse = await axios.get(`/api/users/${username.value}`);
     if (userCheckResponse.data) {
       await axios.put(`/api/users/${username.value}`, userDto);
-      dialogMessage.value = "User created successfully.";
+      dialogMessage.value = "User updated successfully.";
       showDialog.value = true;
     }
   } catch (error) {

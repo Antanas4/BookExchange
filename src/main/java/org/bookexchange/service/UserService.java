@@ -21,7 +21,6 @@ import java.util.Optional;
 @AllArgsConstructor
 
 public class UserService {
-
     private final UserRepository userRepository;
 
     public void createUser(UserDto userDto) {

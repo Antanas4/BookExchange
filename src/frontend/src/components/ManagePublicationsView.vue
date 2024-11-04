@@ -7,7 +7,7 @@
 
       </FloatLabel>
 
-      <label for="author" class="dialog-label">Author</label>
+      <label for="username" class="dialog-label">Username</label>
       <InputText v-model="ownerUsername" placeholder="Enter Publications Owner Username"
                  @input="validateField('ownerUsername', 'form')"/>
       <p v-if="formInputWarning.ownerUsername" class="warning-message">{{ formInputWarning.ownerUsername }}</p>
