@@ -5,7 +5,7 @@ import 'primeicons/primeicons.css';
 import App from './App.vue';
 
 import {createRouter, createWebHistory} from 'vue-router'
-import ManageUsersView from "@/components/ManageUsersView.vue";
+import ManageUsersView from "@/views/ManageUsersView.vue";
 import ManagePublicationsView from "@/components/ManagePublicationsView.vue";
 
 const routes = [

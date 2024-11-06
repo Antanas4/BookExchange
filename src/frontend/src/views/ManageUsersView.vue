@@ -26,8 +26,8 @@
       <InputText id="address" v-if="userType === 'Client'" v-model="address" placeholder="Enter Address" :disabled="userType === 'Admin'"/>
       <InputText id="admin-level" v-if="userType === 'Admin'" v-model="adminLevel" placeholder="Admin Level"
                  :disabled="userType === 'Client'"/>
-      <Button label="Create" severity="success" @click="createUser" :disabled="!isFormValid"/>
-      <Button label="Update" severity="warn" @click="updateUser" :disabled="!isFormValid"/>
+      <Button label="Create" severity="success" @click="handleCreateUser" :disabled="!isFormValid"/>
+      <Button label="Update" severity="warn" @click="handleUpdateUser" :disabled="!isFormValid"/>
     </div>
     <div class="card-user-list">
       <h2 class="card-header">User List</h2>
@@ -40,7 +40,7 @@
         <Column field="adminLevel" header="Admin Level"/>
         <Column header="Actions">
           <template #body="slotProps">
-            <Button icon="pi pi-trash" outlined rounded severity="danger" @click="deleteUser(slotProps.data.username)"/>
+            <Button icon="pi pi-trash" outlined rounded severity="danger" @click="handleDeleteUser(slotProps.data.username)"/>
           </template>
         </Column>
       </DataTable>
@@ -62,9 +62,9 @@ import RadioButton from 'primevue/radiobutton';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dialog from "primevue/dialog";
-import axios from 'axios';
 
 import {computed, ref} from "vue";
+import { createUser, getUsers, updateUser, deleteUser } from '@/service/ManageUsersService';
 
 const name = ref('');
 const surname = ref('');
@@ -78,21 +78,22 @@ const users = ref([]);
 const showDialog = ref(false);
 const dialogMessage = ref('');
 
-let userDto = ref({
-  name: '',
-  surname: '',
-  username: '',
-  password: '',
-  address: '',
-  adminLevel: '',
-  dateOfBirth: '',
-  userType: ''
-});
 
 const warningMessages = ref({
   name:'',
   surname:'',
 });
+
+const resetFormFields = () => {
+  userType.value = null;
+  name.value = '';
+  surname.value = '';
+  username.value = '';
+  password.value = '';
+  adminLevel.value = '';
+  dateOfBirth.value = '';
+  address.value = null;
+};
 
 const validators = {
   onlyLetters: (value) => /^[A-Za-z]*$/.test(value) ? '' : 'Only letters are allowed!',
@@ -129,9 +130,8 @@ const isFormValid = computed(() => {
   }
 });
 
-const createUser = async () => {
-
-  userDto = {
+const handleCreateUser = async () => {
+  const userDto = {
     name: name.value,
     surname: surname.value,
     username: username.value,
@@ -139,42 +139,30 @@ const createUser = async () => {
     address: userType.value === 'Client' ? address.value : undefined,
     dateOfBirth: userType.value === 'Client' ? dateOfBirth.value : undefined,
     adminLevel: userType.value === 'Admin' ? adminLevel.value : undefined,
-    userType: userType.value
+    userType: userType.value,
   };
 
   try {
-    const response = await axios.post('/api/users', userDto);
-    console.log("User created", response.data);
-  } catch (error){
-    dialogMessage.value('Username is already taken');
-    showDialog.value = true;
+    await createUser(userDto);
+    dialogMessage.value = "User created successfully.";
+  } catch (error) {
+    dialogMessage.value = error.message;
   } finally {
-    name.value = '';
-    surname.value = '';
-    username.value = '';
-    password.value = '';
-    address.value = '';
-    dateOfBirth.value = '';
-    adminLevel.value = '';
-    userType.value = '';
-    await fetchUserData();
+    await resetFormFields();
+    await handleGetUsers();
   }
-
 };
 
-const fetchUserData = async () => {
+const handleGetUsers = async () => {
   try {
-    const response = await axios.get('/api/users');
-    users.value = response.data;
+    users.value = await getUsers();
   } catch (error) {
-    dialogMessage.value = "Error fetching user data."
-    showDialog.value = true;
+    dialogMessage.value = error.message;
   }
 }
 
-const updateUser = async () => {
-
-  userDto = {
+const handleUpdateUser = async () => {
+  const userDto = {
     name: name.value,
     surname: surname.value,
     username: username.value,
@@ -186,34 +174,28 @@ const updateUser = async () => {
   };
 
   try {
-    const userCheckResponse = await axios.get(`/api/users/${username.value}`);
-    if (userCheckResponse.data) {
-      await axios.put(`/api/users/${username.value}`, userDto);
-      dialogMessage.value = "User updated successfully.";
-      showDialog.value = true;
-    }
+    await updateUser(username.value, userDto);
+    dialogMessage.value = "User updated successfully.";
   } catch (error) {
-    dialogMessage.value = "User " + `${username.value}` + " does not exist.";
-    showDialog.value = true;
+    dialogMessage.value = error.message;
   } finally {
-    await fetchUserData();
+    await resetFormFields();
+    await handleGetUsers();
   }
 }
 
-const deleteUser = async (usernameToDelete) => {
+const handleDeleteUser = async (usernameToDelete) => {
   try {
-    await axios.delete(`/api/users/${usernameToDelete}`)
-    dialogMessage.value = "User deleted successfully."
-    showDialog.value = true;
+    await deleteUser(usernameToDelete);
+    dialogMessage.value = "User deleted successfully.";
   } catch (error) {
-    dialogMessage.value = "An error occurred while deleting the user."
-    showDialog.value = true;
+    dialogMessage.value = error.message;
   } finally {
-    await fetchUserData();
+    await handleGetUsers();
   }
 }
 
-fetchUserData();
+handleGetUsers();
 
 </script>
 
