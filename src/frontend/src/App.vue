@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Menubar :model="items" /> <!-- Add model to pass menu items -->
+    <Menubar :model="items" />
     <router-view></router-view>
   </div>
 </template>
@@ -18,11 +18,15 @@ export default {
       items: [
         {
           label: 'Manage Users',
-          command: () => { this.$router.push('/') }
+          command: () => { this.$router.push('/users') }
         },
         {
           label: 'Manage Publications',
           command: () => { this.$router.push('/publications') }
+        },
+        {
+          label: 'Login',
+          command: () => {this.$router.push('/auth') }
         }
       ]
     };

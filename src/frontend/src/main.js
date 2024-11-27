@@ -7,10 +7,12 @@ import App from './App.vue';
 import {createRouter, createWebHistory} from 'vue-router'
 import ManageUsersView from "@/views/ManageUsersView.vue";
 import ManagePublicationsView from "@/views/ManagePublicationsView.vue";
+import LoginView from "@/views/LoginView.vue";
 
 const routes = [
-    {path: '/', component: ManageUsersView},
-    {path: '/Publications', component: ManagePublicationsView}
+    {path: '/Users', component: ManageUsersView},
+    {path: '/Publications', component: ManagePublicationsView},
+    {path: '/Auth', component: LoginView}
 ]
 
 const router = createRouter({
