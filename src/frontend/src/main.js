@@ -6,7 +6,7 @@ import App from './App.vue';
 
 import {createRouter, createWebHistory} from 'vue-router'
 import ManageUsersView from "@/views/ManageUsersView.vue";
-import ManagePublicationsView from "@/components/ManagePublicationsView.vue";
+import ManagePublicationsView from "@/views/ManagePublicationsView.vue";
 
 const routes = [
     {path: '/', component: ManageUsersView},

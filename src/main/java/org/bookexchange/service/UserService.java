@@ -7,7 +7,6 @@ import org.bookexchange.model.Client;
 import org.bookexchange.model.User;
 import org.bookexchange.repository.UserRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -59,20 +58,7 @@ public class UserService {
         }
         List<UserDto> userDtos = new ArrayList<>();
         for (User user : users) {
-            UserDto userDto = new UserDto();
-            userDto.setName(user.getName());
-            userDto.setSurname(user.getSurname());
-            userDto.setUsername(user.getUsername());
-            userDto.setPassword(user.getPassword());
-
-            if (user instanceof Client client) {
-                userDto.setAddress(client.getAddress());
-                userDto.setDateOfBirth(client.getDateOfBirth());
-                userDto.setUserType("Client");
-            } else if (user instanceof Admin admin) {
-                userDto.setAdminLevel(admin.getAdminLevel());
-                userDto.setUserType("Admin");
-            }
+            UserDto userDto = createUserDto(user);
             userDtos.add(userDto);
         }
         return userDtos;
@@ -82,20 +68,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            UserDto userDto = new UserDto();
-            userDto.setName(user.getName());
-            userDto.setSurname(user.getSurname());
-            userDto.setUsername(user.getUsername());
-            userDto.setPassword(user.getPassword());
-
-            if (user instanceof Client client) {
-                userDto.setAddress(client.getAddress());
-                userDto.setDateOfBirth(client.getDateOfBirth());
-                userDto.setUserType("Client");
-            } else if (user instanceof Admin admin) {
-                userDto.setAdminLevel(admin.getAdminLevel());
-                userDto.setUserType("Admin");
-            }
+            UserDto userDto = createUserDto(user);
             return Optional.of(userDto);
         }
         return Optional.empty();
@@ -131,6 +104,23 @@ public class UserService {
         } else {
             throw new NoSuchElementException("User with username " + username + " does not exist.");
         }
+    }
+
+    private UserDto createUserDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setName(user.getName());
+        userDto.setSurname(user.getSurname());
+        userDto.setUsername(user.getUsername());
+        userDto.setPassword(user.getPassword());
+        if (user instanceof Client client) {
+            userDto.setAddress(client.getAddress());
+            userDto.setDateOfBirth(client.getDateOfBirth());
+            userDto.setUserType("Client");
+        } else if (user instanceof Admin admin) {
+            userDto.setAdminLevel(admin.getAdminLevel());
+            userDto.setUserType("Admin");
+        }
+        return userDto;
     }
 
 }

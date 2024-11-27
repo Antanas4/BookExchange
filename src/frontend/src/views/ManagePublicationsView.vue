@@ -338,7 +338,6 @@ const loadPublications = async () => {
 const openEditDialog = async (publicationToEditData) => {
   publicationToEdit.value = JSON.parse(JSON.stringify(publicationToEditData));
   visibleDialog.value = true;
-
 }
 
 const savePublication = async () => {
