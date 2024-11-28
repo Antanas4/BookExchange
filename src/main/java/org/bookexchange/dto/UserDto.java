@@ -1,6 +1,7 @@
 package org.bookexchange.dto;
 
 import lombok.*;
+import org.bookexchange.model.enums.AdminLevel;
 
 import java.time.LocalDate;
 
@@ -16,7 +17,7 @@ public class UserDto {
     private String password;
     private String address;
     private LocalDate dateOfBirth;
-    private String adminLevel;
+    private AdminLevel adminLevel;
     private String userType;
 
 }

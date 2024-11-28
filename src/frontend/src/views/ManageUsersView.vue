@@ -26,8 +26,10 @@
                   :disabled="userType === 'Admin'"/>
       <InputText id="address" v-if="userType === 'Client'" v-model="address" placeholder="Enter Address"
                  :disabled="userType === 'Admin'"/>
-      <InputText id="admin-level" v-if="userType === 'Admin'" v-model="adminLevel" placeholder="Admin Level"
-                 :disabled="userType === 'Client'"/>
+
+      <AutoComplete v-if="userType === 'Admin'" v-model="adminLevel" dropdown :suggestions="adminLevelOptions"
+                    placeholder="Select Admin Level" @complete="searchAdminLevel"/>
+
       <Button label="Create" severity="success" @click="handleCreateUser" :disabled="!isFormValid"/>
     </div>
     <div class="card-user-list">
@@ -106,6 +108,7 @@ import RadioButton from 'primevue/radiobutton';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dialog from "primevue/dialog";
+import AutoComplete from "primevue/autocomplete";
 
 import {computed, ref} from "vue";
 import {createUser, getUsers, updateUser, deleteUser} from '@/service/ManageUsersService';
@@ -123,6 +126,11 @@ const showDialog = ref(false);
 const dialogMessage = ref('');
 const editDialogVisible = ref(false);
 const editingUser = ref({});
+const adminLevelOptions = ref([
+  {label: 'BASIC', value: 'BASIC'},
+  {label: 'MIDDLE', value: 'MIDDLE'},
+  {label: 'SUPER', value: 'Level 3'}
+]);
 
 const warningMessages = ref({
   name: '',
@@ -233,37 +241,15 @@ const handleCreateUser = async () => {
 
 const handleGetUsers = async () => {
   try {
-    users.value = await getUsers();
+    const data = await getUsers();
+    console.log(data);
+    users.value = data;
   } catch (error) {
     dialogMessage.value = error.message;
     showDialog.value = true;
   }
 }
 
-// const handleUpdateUser = async () => {
-//   const userDto = {
-//     name: name.value,
-//     surname: surname.value,
-//     username: username.value,
-//     password: password.value,
-//     address: userType.value === 'Client' ? address.value : undefined,
-//     dateOfBirth: userType.value === 'Client' ? dateOfBirth.value : undefined,
-//     adminLevel: userType.value === 'Admin' ? adminLevel.value : undefined,
-//     userType: userType.value
-//   };
-//
-//   try {
-//     await updateUser(username.value, userDto);
-//     dialogMessage.value = "User updated successfully.";
-//     showDialog.value = true;
-//   } catch (error) {
-//     dialogMessage.value = error.message;
-//     showDialog.value = true;
-//   } finally {
-//     await resetFormFields();
-//     await handleGetUsers();
-//   }
-// }
 
 const handleDeleteUser = async (usernameToDelete) => {
   try {
@@ -295,6 +281,13 @@ const handleUpdateUser = async () => {
   } finally {
     await handleGetUsers();
   }
+};
+
+const searchAdminLevel = (event) => {
+  const query = event.query.toLowerCase();
+  adminLevelOptions.value = ['BASIC', 'MIDDLE', 'SUPER'].filter(option =>
+      option.toLowerCase().includes(query)
+  );
 };
 
 handleGetUsers();

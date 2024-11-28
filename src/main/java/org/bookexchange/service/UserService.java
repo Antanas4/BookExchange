@@ -5,6 +5,7 @@ import org.bookexchange.dto.UserDto;
 import org.bookexchange.model.Admin;
 import org.bookexchange.model.Client;
 import org.bookexchange.model.User;
+import org.bookexchange.model.enums.AdminLevel;
 import org.bookexchange.repository.ClientRepository;
 import org.bookexchange.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -57,7 +58,7 @@ public class UserService {
         List<User> users = userRepository.findAll();
 
         if (users.isEmpty()) {
-            throw new NoSuchElementException("No users found.");
+            return new ArrayList<>();
         }
         List<UserDto> userDtos = new ArrayList<>();
         for (User user : users) {
