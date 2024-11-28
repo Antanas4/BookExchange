@@ -64,17 +64,4 @@ public class TransactionService {
         }
         return transactionDtos;
     }
-
-//    public void updateTransaction(TransactionDto transactionDto) {
-//        Optional<Transaction> optionalTransaction = transactionRepository.findById(transactionDto.getPublicationId());
-//        if (optionalTransaction.isPresent()) {
-//            Transaction transaction = optionalTransaction.get();
-//            transaction.setType(transactionDto.getTransactionType());
-//            transaction.setOwnerId(transactionDto.getOwnerId());
-//            transaction.setRecipientId(transactionDto.getRecipientId());
-//            transactionRepository.save(transaction);
-//        } else {
-//            throw new NoSuchElementException("Transaction not found");
-//        }
-//    }
 }

@@ -341,7 +341,6 @@ const openEditDialog = async (publicationToEditData) => {
 }
 
 const savePublication = async () => {
-
   try {
     if (publicationToEdit.value) {
       await updatePublicationService(publicationToEdit.value);

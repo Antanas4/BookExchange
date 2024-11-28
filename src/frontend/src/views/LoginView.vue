@@ -1,5 +1,11 @@
 <template>
   <div class="card">
+    <DialogMessage
+        v-model:visible="showDialog"
+        title="Warning"
+        message="Login failed. Please try again."
+    />
+
     <div class="flex-container">
       <div class="login-section">
         <div class="input-group">
@@ -29,25 +35,33 @@ import Divider from 'primevue/divider';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
-import {ref} from "vue";
-import {login} from "@/service/LoginService";
+import { ref } from "vue";
+import { login } from "@/service/LoginService";
+import DialogMessage from '@/components/DialogMessage.vue';
 
 const router = useRouter();
 const username = ref('');
 const password = ref('');
+const showDialog = ref(false);
 
-const handleLogin = async () =>{
-  let loginRequestDto ={
+const handleLogin = async () => {
+  const loginRequestDto = {
     username: username.value,
     password: password.value
-  }
-  try{
-    await login(loginRequestDto);
-    router.push('/users');
+  };
+
+  try {
+    const response = await login(loginRequestDto);
+    if (response.success) {
+      router.push('/users');
+    } else {
+      showDialog.value = true;
+    }
   } catch (error) {
-    console.log("Login failed", error);
+    console.error("Login failed", error);
+    showDialog.value = true;
   }
-}
+};
 
 
 </script>
