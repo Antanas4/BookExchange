@@ -127,9 +127,9 @@ const dialogMessage = ref('');
 const editDialogVisible = ref(false);
 const editingUser = ref({});
 const adminLevelOptions = ref([
-  {label: 'BASIC', value: 'BASIC'},
-  {label: 'MIDDLE', value: 'MIDDLE'},
-  {label: 'SUPER', value: 'Level 3'}
+  {label: 'Basic', value: 'BASIC'},
+  {label: 'Middle', value: 'MIDDLE'},
+  {label: 'Super', value: 'SUPER'}
 ]);
 
 const warningMessages = ref({
@@ -285,7 +285,7 @@ const handleUpdateUser = async () => {
 
 const searchAdminLevel = (event) => {
   const query = event.query.toLowerCase();
-  adminLevelOptions.value = ['BASIC', 'MIDDLE', 'SUPER'].filter(option =>
+  adminLevelOptions.value = ['Basic', 'Middle', 'Super'].filter(option =>
       option.toLowerCase().includes(query)
   );
 };
