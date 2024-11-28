@@ -5,8 +5,10 @@ import org.bookexchange.dto.UserDto;
 import org.bookexchange.model.Admin;
 import org.bookexchange.model.Client;
 import org.bookexchange.model.User;
+import org.bookexchange.repository.ClientRepository;
 import org.bookexchange.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,20 +23,21 @@ import java.util.Optional;
 
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public void createUser(UserDto userDto) {
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
         if (existingUser.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User with username " + userDto.getUsername() + " already exists.");
         }
-
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         User user;
         if (userDto.getUserType().equals("Client")) {
             user = new Client(
                     userDto.getName(),
                     userDto.getSurname(),
                     userDto.getUsername(),
-                    userDto.getPassword(),
+                    encodedPassword,
                     userDto.getAddress(),
                     userDto.getDateOfBirth()
             );
@@ -43,7 +46,7 @@ public class UserService {
                     userDto.getName(),
                     userDto.getSurname(),
                     userDto.getUsername(),
-                    userDto.getPassword(),
+                    encodedPassword,
                     userDto.getAdminLevel()
             );
         }
@@ -78,11 +81,12 @@ public class UserService {
     public void updateUser(String username, UserDto userDto) {
         Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isPresent()) {
+            String encodedPassword = passwordEncoder.encode(userDto.getPassword());
             User user = optionalUser.get();
             user.setName(userDto.getName());
             user.setSurname(userDto.getSurname());
             user.setUsername(userDto.getUsername());
-            user.setPassword(userDto.getPassword());
+            user.setPassword(encodedPassword);
 
             if (user instanceof Client client) {
                 client.setAddress(userDto.getAddress());
