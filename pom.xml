@@ -78,8 +78,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <version>3.4.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.session/spring-session-core -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-core</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.session/spring-session-jdbc -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-jdbc</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

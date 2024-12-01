@@ -14,3 +14,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: 'true'
+  session:
+    jdbc:
+      initialize-schema: always
+    timeout: 30m
