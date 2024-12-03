@@ -54,9 +54,7 @@ const handleLogin = async () => {
     const response = await login(loginRequestDto);
     console.log(response);
     if (response === username.value) {
-      await router.push('/users');
-    } else {
-      showDialog.value = true;
+      await router.push('/publications');
     }
   } catch (error) {
     console.error("Login failed", error);

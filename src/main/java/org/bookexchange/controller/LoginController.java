@@ -24,7 +24,7 @@ public class LoginController {
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto, HttpSession session) {
         try{
             loginService.loginUser(loginRequestDto, session);
-            return ResponseEntity.ok("Login successful");
+            return ResponseEntity.ok(loginRequestDto.getUsername());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

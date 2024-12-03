@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const USERS_URL = 'api/users';
+const USERS_URL = 'api/admin/users';
 
 export const createUser = async (userDto) => {
     try {

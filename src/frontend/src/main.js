@@ -10,9 +10,9 @@ import ManagePublicationsView from "@/views/ManagePublicationsView.vue";
 import LoginView from "@/views/LoginView.vue";
 
 const routes = [
-    {path: '/Users', component: ManageUsersView},
-    {path: '/Publications', component: ManagePublicationsView},
-    {path: '/Auth', component: LoginView}
+    {path: '/users', component: ManageUsersView},
+    {path: '/publications', component: ManagePublicationsView},
+    {path: '/auth', component: LoginView}
 ]
 
 const router = createRouter({
@@ -22,7 +22,6 @@ const router = createRouter({
 
 const app = createApp(App);
 app.use(PrimeVue, {
-    // Default theme configuration
     theme: {
         preset: Aura,
         options: {

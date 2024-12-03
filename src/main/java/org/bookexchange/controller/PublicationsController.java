@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/publications")
+@RequestMapping("/api/client/publications")
 
 public class PublicationsController {
     private final PublicationService publicationService;
