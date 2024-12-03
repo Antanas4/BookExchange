@@ -5,8 +5,7 @@ import org.bookexchange.dto.UserDto;
 import org.bookexchange.model.Admin;
 import org.bookexchange.model.Client;
 import org.bookexchange.model.User;
-import org.bookexchange.model.enums.AdminLevel;
-import org.bookexchange.repository.ClientRepository;
+import org.bookexchange.model.enums.UserRole;
 import org.bookexchange.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,14 +32,15 @@ public class UserService {
         }
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         User user;
-        if (userDto.getUserType().equals("Client")) {
+        if (userDto.getUserRole() == UserRole.ROLE_CLIENT) {
             user = new Client(
                     userDto.getName(),
                     userDto.getSurname(),
                     userDto.getUsername(),
                     encodedPassword,
                     userDto.getAddress(),
-                    userDto.getDateOfBirth()
+                    userDto.getDateOfBirth(),
+                    userDto.getUserRole()
             );
         } else {
             user = new Admin(
@@ -48,7 +48,8 @@ public class UserService {
                     userDto.getSurname(),
                     userDto.getUsername(),
                     encodedPassword,
-                    userDto.getAdminLevel()
+                    userDto.getAdminLevel(),
+                    userDto.getUserRole()
             );
         }
         userRepository.save(user);
@@ -56,7 +57,6 @@ public class UserService {
 
     public List<UserDto> getUsers() {
         List<User> users = userRepository.findAll();
-
         if (users.isEmpty()) {
             return new ArrayList<>();
         }
@@ -120,10 +120,10 @@ public class UserService {
         if (user instanceof Client client) {
             userDto.setAddress(client.getAddress());
             userDto.setDateOfBirth(client.getDateOfBirth());
-            userDto.setUserType("Client");
+            userDto.setUserRole(client.getRole());
         } else if (user instanceof Admin admin) {
             userDto.setAdminLevel(admin.getAdminLevel());
-            userDto.setUserType("Admin");
+            userDto.setUserRole(admin.getRole());
         }
         return userDto;
     }

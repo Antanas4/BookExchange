@@ -5,6 +5,9 @@ import org.bookexchange.dto.UserDto;
 import org.bookexchange.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,7 +19,7 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 @AllArgsConstructor
 
-public class UsersController {
+public class UserController {
     private final UserService userService;
 
 
@@ -25,7 +28,7 @@ public class UsersController {
         try {
             userService.createUser(userDto);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(userDto.getUserType() + " created successfully: " + userDto.getUsername());
+                    .body(userDto.getUserRole() + " created successfully: " + userDto.getUsername());
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode())
                     .body(e.getReason());
@@ -37,6 +40,11 @@ public class UsersController {
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getUsers() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         try {
             List<UserDto> users = userService.getUsers();
             return ResponseEntity.ok(users);
@@ -79,5 +87,14 @@ public class UsersController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while deleting the user: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
+            return ResponseEntity.ok(auth.getPrincipal());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

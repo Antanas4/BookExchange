@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bookexchange.model.enums.UserRole;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,10 +25,11 @@ public class Client extends User{
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Publication> ownedPublications = new ArrayList<>();
 
-    public Client(String name, String surname, String username, String password, String address, LocalDate dateOfBirth) {
-        super(name, surname, username, password);
+    public Client(String name, String surname, String username, String password, String address, LocalDate dateOfBirth, UserRole role) {
+        super(name, surname, username, password, role);
         this.address = address;
         this.dateOfBirth = dateOfBirth;
     }
+
 
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bookexchange.model.enums.AdminLevel;
+import org.bookexchange.model.enums.UserRole;
 
 @Getter
 @Setter
@@ -19,8 +20,8 @@ public class Admin extends User {
     @Enumerated(EnumType.STRING)
     private AdminLevel adminLevel;
 
-    public Admin(String name, String surname, String username, String password, AdminLevel adminLevel) {
-        super(name, surname, username, password);
+    public Admin(String name, String surname, String username, String password, AdminLevel adminLevel, UserRole role) {
+        super(name, surname, username, password, role);
         this.adminLevel = adminLevel;
     }
 }

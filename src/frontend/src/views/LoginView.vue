@@ -52,8 +52,9 @@ const handleLogin = async () => {
 
   try {
     const response = await login(loginRequestDto);
-    if (response === "Login successful") { // Check the actual response message or adapt to your backend response format
-      router.push('/users');
+    console.log(response);
+    if (response === username.value) {
+      await router.push('/users');
     } else {
       showDialog.value = true;
     }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bookexchange.model.enums.UserRole;
 
 @Getter
 @Setter
@@ -23,12 +24,15 @@ public class User {
     @Column(unique = true)
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
-    public User (String name, String surname, String username, String password) {
+    public User (String name, String surname, String username, String password, UserRole role) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
 }
