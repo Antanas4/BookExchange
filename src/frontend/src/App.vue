@@ -1,35 +1,59 @@
 <template>
   <div id="app">
-    <Menubar :model="items" />
+    <Menubar :model="navLinks">
+      <template #end>
+        <Button label="Logout" class="p-button-danger" @click="handleLogout"/>
+      </template>
+    </Menubar>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import Menubar from 'primevue/menubar';
+import Button from "primevue/button";
+import axios from "axios";
 
 export default {
   name: 'App',
   components: {
-    Menubar
+    Menubar,
+    Button
   },
   data() {
     return {
-      items: [
+      navLinks: [
         {
           label: 'Manage Users',
-          command: () => { this.$router.push('/users') }
+          command: () => {
+            this.$router.push('/users')
+          }
         },
         {
           label: 'Manage Publications',
-          command: () => { this.$router.push('/publications') }
+          command: () => {
+            this.$router.push('/publications')
+          }
         },
         {
           label: 'Login',
-          command: () => {this.$router.push('/auth') }
+          command: () => {
+            this.$router.push('/auth')
+          }
         }
       ]
     };
+  },
+  methods: {
+    handleLogout() {
+      axios.post('/api/auth/logout')
+          .then(() => {
+            this.$router.push('/auth');
+          })
+          .catch(error => {
+            console.error('Logout failed:', error);
+          });
+    }
   }
 };
 </script>
