@@ -222,7 +222,9 @@ const handleCreateUser = async () => {
     password: password.value,
     address: userType.value === 'Client' ? address.value : undefined,
     dateOfBirth: userType.value === 'Client' ? dateOfBirth.value : undefined,
-    adminLevel: userType.value === 'Admin' ? adminLevel.value : undefined,
+    adminLevel: userType.value === 'Admin' && adminLevel.value
+        ? adminLevel.value.toUpperCase()
+        : undefined,
     userType: userType.value,
   };
 
