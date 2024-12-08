@@ -23,7 +23,7 @@ public class PublicationService {
 
     public void createPublication(PublicationDto publicationDto) {
         Client client = clientRepository.findByUsername(publicationDto.getOwnerUsername())
-                .orElseThrow(() -> new RuntimeException("Client not found"));
+                .orElseThrow(() -> new RuntimeException("Client not found for username: " + publicationDto.getOwnerUsername()));
         Publication publication;
         switch (publicationDto.getPublicationType()) {
             case "Book" -> {

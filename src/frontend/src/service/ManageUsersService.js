@@ -8,6 +8,7 @@ export const createUser = async (userDto) => {
         console.log("User created", response.data);
         return response.data;
     } catch (error) {
+        console.log(error.message);
         throw new Error('Username is already taken');
     }
 }
@@ -22,7 +23,7 @@ export const getUsers = async () => {
 }
 export const updateUser = async (username, userDto) => {
     try {
-        const userCheckResponse = await axios.get(`${USERS_URL}/${username}`);
+        const userCheckResponse = await axios.get(`api/${username}`);
         if (userCheckResponse.data) {
             const response = await axios.put(`${USERS_URL}/${username}`, userDto);
             return response.data;

@@ -23,13 +23,12 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
 
-
     @PostMapping("/admin/users")
     public ResponseEntity<String> createUser(@RequestBody UserDto userDto) {
         try {
             userService.createUser(userDto);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(userDto.getUserRole() + " created successfully: " + userDto.getUsername());
+                    .body(userDto.getUserType() + " created successfully: " + userDto.getUsername());
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode())
                     .body(e.getReason());

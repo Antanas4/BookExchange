@@ -9,6 +9,7 @@ export const createPublicationService = async (publicationDto, ownerUsername) =>
             await axios.post(PUBLICATIONS_URL, publicationDto);
         }
     } catch (error) {
+        console.error("Error in creating publication:", error);
         throw new Error;
     }
 }

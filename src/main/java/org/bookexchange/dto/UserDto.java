@@ -19,6 +19,6 @@ public class UserDto {
     private String address;
     private LocalDate dateOfBirth;
     private AdminLevel adminLevel;
-    private UserRole userRole;
+    private String userType;
 
 }

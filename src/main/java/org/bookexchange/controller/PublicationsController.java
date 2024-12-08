@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bookexchange.dto.PublicationDto;
 import org.bookexchange.service.PublicationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api/client/publications")
 
 public class PublicationsController {
+    private static final Logger logger = LoggerFactory.getLogger(PublicationsController.class);
     private final PublicationService publicationService;
 
     @PostMapping
@@ -26,6 +29,7 @@ public class PublicationsController {
             publicationService.createPublication(publicationDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(publicationDto.toString());
         } catch (Exception e){
+            logger.error("Error creating publication", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

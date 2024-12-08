@@ -7,16 +7,15 @@ import org.bookexchange.model.Client;
 import org.bookexchange.model.User;
 import org.bookexchange.model.enums.UserRole;
 import org.bookexchange.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -24,15 +23,18 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public void createUser(UserDto userDto) {
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
+        logger.error(userDto.getUserType());
         if (existingUser.isPresent()) {
+            logger.error(String.valueOf(existingUser.get().getUsername()));
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User with username " + userDto.getUsername() + " already exists.");
         }
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         User user;
-        if (userDto.getUserRole() == UserRole.ROLE_CLIENT) {
+        if (Objects.equals(userDto.getUserType(), "Client")) {
             user = new Client(
                     userDto.getName(),
                     userDto.getSurname(),
@@ -40,7 +42,7 @@ public class UserService {
                     encodedPassword,
                     userDto.getAddress(),
                     userDto.getDateOfBirth(),
-                    userDto.getUserRole()
+                    UserRole.ROLE_CLIENT
             );
         } else {
             user = new Admin(
@@ -49,7 +51,7 @@ public class UserService {
                     userDto.getUsername(),
                     encodedPassword,
                     userDto.getAdminLevel(),
-                    userDto.getUserRole()
+                    UserRole.ROLE_ADMIN
             );
         }
         userRepository.save(user);
@@ -120,10 +122,10 @@ public class UserService {
         if (user instanceof Client client) {
             userDto.setAddress(client.getAddress());
             userDto.setDateOfBirth(client.getDateOfBirth());
-            userDto.setUserRole(client.getRole());
+            userDto.setUserType("Client");
         } else if (user instanceof Admin admin) {
             userDto.setAdminLevel(admin.getAdminLevel());
-            userDto.setUserRole(admin.getRole());
+            userDto.setUserType("Admin");
         }
         return userDto;
     }
