@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.bookexchange.dto.PublicationDto;
 import org.bookexchange.model.*;
+import org.bookexchange.model.enums.PublicationStatus;
 import org.bookexchange.repository.ClientRepository;
 import org.bookexchange.repository.PublicationRepository;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ public class PublicationService {
         publication.setAuthor(publicationDto.getAuthor());
         publication.setPrice(publicationDto.getPrice());
         publication.setOwner(client);
+        publication.setStatus(PublicationStatus.AVAILABLE);
         publicationRepository.save(publication);
     }
 
@@ -57,6 +59,7 @@ public class PublicationService {
             publicationDto.setAuthor(publication.getAuthor());
             publicationDto.setPrice(publication.getPrice());
             publicationDto.setOwnerUsername(publication.getOwner().getUsername());
+            publicationDto.setStatus(publication.getStatus());
             if (publication instanceof Book) {
                 Book book = (Book) publication;
                 publicationDto.setPublicationType("Book");

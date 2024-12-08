@@ -2,6 +2,7 @@ package org.bookexchange.controller;
 
 import lombok.AllArgsConstructor;
 import org.bookexchange.dto.UserDto;
+import org.bookexchange.model.User;
 import org.bookexchange.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,14 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/admin/users")
+@RequestMapping("/api")
 @AllArgsConstructor
 
 public class UserController {
     private final UserService userService;
 
 
-    @PostMapping
+    @PostMapping("/admin/users")
     public ResponseEntity<String> createUser(@RequestBody UserDto userDto) {
         try {
             userService.createUser(userDto);
@@ -38,9 +39,8 @@ public class UserController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/admin/users")
     public ResponseEntity<List<UserDto>> getUsers() {
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -63,7 +63,7 @@ public class UserController {
         return userDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{username}")
+    @PutMapping("/admin/users/{username}")
     public ResponseEntity<String> updateUser(@RequestBody UserDto userDto, @PathVariable String username) {
         try {
             userService.updateUser(username, userDto);
@@ -76,7 +76,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{username}")
+    @DeleteMapping("/admin/users/{username}")
     public ResponseEntity<String> deleteUser(@PathVariable String username) {
         try {
             userService.deleteUser(username);
@@ -89,11 +89,11 @@ public class UserController {
         }
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
-            return ResponseEntity.ok(auth.getPrincipal());
+    @GetMapping("/current")
+    public ResponseEntity<User> getCurrentUser(Authentication authentication) {
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

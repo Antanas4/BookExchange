@@ -1,6 +1,7 @@
 package org.bookexchange.dto;
 
 import lombok.*;
+import org.bookexchange.model.enums.PublicationStatus;
 
 import java.time.LocalDate;
 
@@ -20,4 +21,5 @@ public class PublicationDto {
     private String illustrator;
     private String publicationType;
     private String ownerUsername;
+    private PublicationStatus status;
 }

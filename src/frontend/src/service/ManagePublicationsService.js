@@ -4,7 +4,7 @@ const PUBLICATIONS_URL = '/api/client/publications';
 
 export const createPublicationService = async (publicationDto, ownerUsername) => {
     try {
-        const userCheckResponse = await axios.get(`/api/users/${ownerUsername}`);
+        const userCheckResponse = await axios.get(`/api/${ownerUsername}`);
         if (userCheckResponse.data) {
             await axios.post(PUBLICATIONS_URL, publicationDto);
         }
