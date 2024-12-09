@@ -1,11 +1,11 @@
 package org.bookexchange.service;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.bookexchange.dto.PublicationDto;
 import org.bookexchange.dto.TransactionDto;
 import org.bookexchange.model.*;
 import org.bookexchange.model.enums.PublicationStatus;
+import org.bookexchange.model.enums.TransactionType;
 import org.bookexchange.repository.ClientRepository;
 import org.bookexchange.repository.PublicationRepository;
 import org.bookexchange.repository.UserRepository;
@@ -20,8 +20,9 @@ public class PublicationService {
     private final ClientRepository clientRepository;
     private final PublicationRepository publicationRepository;
     private final UserService userService;
-    private final TransactionService transactionService;
     private final UserRepository userRepository;
+    private final TransactionService transactionService;
+
 
     public void createPublication(PublicationDto publicationDto) {
         Client client = clientRepository.findByUsername(publicationDto.getOwnerUsername())
@@ -55,7 +56,6 @@ public class PublicationService {
         List<PublicationDto> publicationDtos= new ArrayList<>();
         List<Publication> publications = publicationRepository.findAll();
         for (Publication publication : publications) {
-            PublicationDto dto = new PublicationDto();
             PublicationDto publicationDto = createPublicationDto(publication);
             publicationDtos.add(publicationDto);
         }
@@ -98,7 +98,6 @@ public class PublicationService {
         List<Publication> publications = publicationRepository.findAllExcludingCurrentUser(currentUser);
         List<PublicationDto> publicationDtos = new ArrayList<>();
         for (Publication publication : publications) {
-            PublicationDto dto = new PublicationDto();
             PublicationDto publicationDto = createPublicationDto(publication);
             publicationDtos.add(publicationDto);
         }
@@ -127,6 +126,17 @@ public class PublicationService {
         return dto;
     }
 
+//    public void reservePublication(PublicationDto publicationDto) {
+//        Optional<Publication> publication = publicationRepository.findById(publicationDto.getId());
+//        if (publication.isPresent()) {
+//            Publication publicationToReserve = publication.get();
+//            Transaction transaction = new Transaction();
+//            publicationToReserve.setStatus(PublicationStatus.RESERVED);
+//            transaction.setOwnerId(publicationToReserve.getOwner().getId());
+//            transaction.setRecipientId(publicationDto.get);
+//        }
+//    }
+
     public void buyPublication(Integer publicationId) {
         Optional<Publication> publication = publicationRepository.findById(publicationId);
         if (publication.isPresent()) {
@@ -138,19 +148,9 @@ public class PublicationService {
             transactionDto.setPublicationId(publicationBought.getId());
             transactionDto.setOwnerId(publicationBought.getOwner().getId());
             transactionDto.setRecipientId(RecipientClient.get().getId());
-
+            transactionDto.setTransactionType(TransactionType.BUY);
+            transactionService.createTransaction(transactionDto);
         }
     }
 
-//    TODO
-//    public void reservePublication(PublicationDto publicationDto) {
-//        Optional<Publication> publication = publicationRepository.findById(publicationDto.getId());
-//        if (publication.isPresent()) {
-//            Publication publicationToReserve = publication.get();
-//            Transaction transaction = new Transaction();
-//            publicationToReserve.setStatus(PublicationStatus.RESERVED);
-//            transaction.setOwnerId(publicationToReserve.getOwner().getId());
-//            transaction.setRecipientId();
-//        }
-//    }
 }

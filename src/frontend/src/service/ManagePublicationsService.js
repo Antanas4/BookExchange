@@ -46,6 +46,14 @@ export const getPublicationsShopService = async () => {
         return response.data;
     } catch (error) {
         console.error("Error fetching publications: ", error.message);
+    }
+};
+
+export const buyPublication = async (publication) => {
+    try {
+       await axios.put(`${PUBLICATIONS_URL}/shop/buy/${publication.id}`);
+    } catch (error) {
+        console.error("Error fetching publications: ", error.message);
         throw new Error("Error fetching publications: " + error.message);
     }
 };

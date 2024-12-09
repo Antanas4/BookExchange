@@ -18,7 +18,7 @@
               <div class="buy-button-container">
                 <span class="price-xl">${{ item.price }}</span>
                 <div class="button-group">
-                  <Button class="buy-button">Buy</Button>
+                  <Button class="buy-button" @click=handleBuyPublication(item)>Buy</Button>
                   <Button class="reserve-button">Reserve</Button>
                 </div>
               </div>
@@ -35,7 +35,7 @@ import {ref, onMounted} from 'vue';
 import Button from 'primevue/button';
 import DataView from 'primevue/dataview';
 import Tag from "primevue/tag";
-import {getPublicationsShopService} from '@/service/ManagePublicationsService';
+import {getPublicationsShopService, buyPublication} from '@/service/ManagePublicationsService';
 
 const publications = ref([]);
 
@@ -47,6 +47,15 @@ onMounted(async () => {
     console.error('Error fetching publications:', error);
   }
 });
+
+const handleBuyPublication = async (publication) => {
+  try{
+    await buyPublication(publication);
+    publications.value = await getPublicationsShopService();
+  } catch (error) {
+    console.error('Error fetching publications:', error);
+  }
+}
 </script>
 
 <style scoped>

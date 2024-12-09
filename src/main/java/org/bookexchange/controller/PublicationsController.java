@@ -75,6 +75,7 @@ public class PublicationsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 //    @PutMapping("/shop/reserve")
 //    public ResponseEntity<String> reservePublication(@RequestBody PublicationDto publicationDto) {
 //        try{
@@ -84,7 +85,8 @@ public class PublicationsController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 //        }
 //    }
-    @PutMapping ("/shop/buy")
+
+    @PutMapping ("/shop/buy/{publicationId}")
     public ResponseEntity<String> buyPublication(@PathVariable Integer publicationId) {
         try{
             publicationService.buyPublication(publicationId);
