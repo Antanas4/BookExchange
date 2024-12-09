@@ -75,4 +75,22 @@ public class PublicationsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+//    @PutMapping("/shop/reserve")
+//    public ResponseEntity<String> reservePublication(@RequestBody PublicationDto publicationDto) {
+//        try{
+//            publicationService.reservePublication(publicationDto);
+//            return ResponseEntity.ok("Publication reserved successfully.");
+//        } catch (Exception e){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+//        }
+//    }
+    @PutMapping ("/shop/buy")
+    public ResponseEntity<String> buyPublication(@PathVariable Integer publicationId) {
+        try{
+            publicationService.buyPublication(publicationId);
+            return ResponseEntity.ok("Publication bought successfully.");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

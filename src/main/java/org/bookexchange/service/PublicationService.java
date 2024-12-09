@@ -3,16 +3,15 @@ package org.bookexchange.service;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.bookexchange.dto.PublicationDto;
+import org.bookexchange.dto.TransactionDto;
 import org.bookexchange.model.*;
 import org.bookexchange.model.enums.PublicationStatus;
 import org.bookexchange.repository.ClientRepository;
 import org.bookexchange.repository.PublicationRepository;
+import org.bookexchange.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -21,6 +20,8 @@ public class PublicationService {
     private final ClientRepository clientRepository;
     private final PublicationRepository publicationRepository;
     private final UserService userService;
+    private final TransactionService transactionService;
+    private final UserRepository userRepository;
 
     public void createPublication(PublicationDto publicationDto) {
         Client client = clientRepository.findByUsername(publicationDto.getOwnerUsername())
@@ -125,4 +126,31 @@ public class PublicationService {
         }
         return dto;
     }
+
+    public void buyPublication(Integer publicationId) {
+        Optional<Publication> publication = publicationRepository.findById(publicationId);
+        if (publication.isPresent()) {
+            Publication publicationBought = publication.get();
+            TransactionDto transactionDto = new TransactionDto();
+            String currentUser = userService.getCurrentUser();
+            Optional<User> RecipientClient = userRepository.findByUsername(currentUser);
+            publicationBought.setStatus(PublicationStatus.SOLD);
+            transactionDto.setPublicationId(publicationBought.getId());
+            transactionDto.setOwnerId(publicationBought.getOwner().getId());
+            transactionDto.setRecipientId(RecipientClient.get().getId());
+
+        }
+    }
+
+//    TODO
+//    public void reservePublication(PublicationDto publicationDto) {
+//        Optional<Publication> publication = publicationRepository.findById(publicationDto.getId());
+//        if (publication.isPresent()) {
+//            Publication publicationToReserve = publication.get();
+//            Transaction transaction = new Transaction();
+//            publicationToReserve.setStatus(PublicationStatus.RESERVED);
+//            transaction.setOwnerId(publicationToReserve.getOwner().getId());
+//            transaction.setRecipientId();
+//        }
+//    }
 }
