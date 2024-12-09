@@ -20,6 +20,7 @@ import java.util.Optional;
 public class PublicationService {
     private final ClientRepository clientRepository;
     private final PublicationRepository publicationRepository;
+    private final UserService userService;
 
     public void createPublication(PublicationDto publicationDto) {
         Client client = clientRepository.findByUsername(publicationDto.getOwnerUsername())
@@ -53,26 +54,8 @@ public class PublicationService {
         List<PublicationDto> publicationDtos= new ArrayList<>();
         List<Publication> publications = publicationRepository.findAll();
         for (Publication publication : publications) {
-            PublicationDto publicationDto = new PublicationDto();
-            publicationDto.setId(publication.getId());
-            publicationDto.setTitle(publication.getTitle());
-            publicationDto.setAuthor(publication.getAuthor());
-            publicationDto.setPrice(publication.getPrice());
-            publicationDto.setOwnerUsername(publication.getOwner().getUsername());
-            publicationDto.setStatus(publication.getStatus());
-            if (publication instanceof Book) {
-                Book book = (Book) publication;
-                publicationDto.setPublicationType("Book");
-                publicationDto.setGenre(book.getGenre());
-            } else if (publication instanceof ComicBook) {
-                ComicBook comicBook = (ComicBook) publication;
-                publicationDto.setPublicationType("Comic Book");
-                publicationDto.setIllustrator(comicBook.getIllustrator());
-            } else if (publication instanceof Magazine) {
-                Magazine magazine = (Magazine) publication;
-                publicationDto.setPublicationType("Magazine");
-                publicationDto.setIssueNumber(magazine.getIssueNumber());
-            }
+            PublicationDto dto = new PublicationDto();
+            PublicationDto publicationDto = createPublicationDto(publication);
             publicationDtos.add(publicationDto);
         }
         return publicationDtos;
@@ -107,5 +90,39 @@ public class PublicationService {
         } else {
             throw new IllegalArgumentException("Publication not found: " + publicationDto.getId());
         }
+    }
+
+    public List<PublicationDto> getPublicationShop() {
+        String currentUser = userService.getCurrentUser();
+        List<Publication> publications = publicationRepository.findAllExcludingCurrentUser(currentUser);
+        List<PublicationDto> publicationDtos = new ArrayList<>();
+        for (Publication publication : publications) {
+            PublicationDto dto = new PublicationDto();
+            PublicationDto publicationDto = createPublicationDto(publication);
+            publicationDtos.add(publicationDto);
+        }
+        return publicationDtos;
+    }
+
+    private PublicationDto createPublicationDto(Publication publication){
+        PublicationDto dto = new PublicationDto();
+        dto.setId(publication.getId());
+        dto.setTitle(publication.getTitle());
+        dto.setAuthor(publication.getAuthor());
+        dto.setPrice(publication.getPrice());
+        dto.setOwnerUsername(publication.getOwner().getUsername());
+        dto.setStatus(publication.getStatus());
+
+        if (publication instanceof Book) {
+            dto.setPublicationType("Book");
+            dto.setGenre(((Book) publication).getGenre());
+        } else if (publication instanceof ComicBook) {
+            dto.setPublicationType("Comic Book");
+            dto.setIllustrator(((ComicBook) publication).getIllustrator());
+        } else if (publication instanceof Magazine) {
+            dto.setPublicationType("Magazine");
+            dto.setIssueNumber(((Magazine) publication).getIssueNumber());
+        }
+        return dto;
     }
 }

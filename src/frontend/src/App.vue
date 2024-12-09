@@ -40,6 +40,12 @@ export default {
           command: () => {
             this.$router.push('/auth')
           }
+        },
+        {
+          label: 'Publications',
+          command: () => {
+            this.$router.push('/publications/shop')
+          }
         }
       ]
     };

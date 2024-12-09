@@ -88,12 +88,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/current")
-    public ResponseEntity<User> getCurrentUser(Authentication authentication) {
-        if (authentication != null) {
-            User user = (User) authentication.getPrincipal();
-            return ResponseEntity.ok(user);
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @GetMapping("/currentUser")
+    public String currentUserName() {
+        return userService.getCurrentUser();
     }
 }

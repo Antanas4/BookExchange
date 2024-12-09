@@ -38,3 +38,14 @@ export const deletePublicationService = async (publicationId) => {
         throw new Error;
     }
 };
+
+export const getPublicationsShopService = async () => {
+    try {
+        const response = await axios.get(`${PUBLICATIONS_URL}/shop`);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching publications: ", error.message);
+        throw new Error("Error fetching publications: " + error.message);
+    }
+};

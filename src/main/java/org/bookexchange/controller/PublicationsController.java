@@ -65,4 +65,14 @@ public class PublicationsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
         }
     } //nereikia cia ID greiciausiai, perziureti!!
+
+    @GetMapping("/shop")
+    public ResponseEntity<List<PublicationDto>> getPublicationsShop(){
+        try{
+            List<PublicationDto> publicationDtos = publicationService.getPublicationShop();
+            return ResponseEntity.ok(publicationDtos);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

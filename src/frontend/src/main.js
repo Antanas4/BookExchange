@@ -8,11 +8,13 @@ import {createRouter, createWebHistory} from 'vue-router'
 import ManageUsersView from "@/views/ManageUsersView.vue";
 import ManagePublicationsView from "@/views/ManagePublicationsView.vue";
 import LoginView from "@/views/LoginView.vue";
+import PublicationsShopView from "@/views/PublicationsShopView.vue";
 
 const routes = [
     {path: '/users', component: ManageUsersView},
     {path: '/publications', component: ManagePublicationsView},
-    {path: '/auth', component: LoginView}
+    {path: '/auth', component: LoginView},
+    {path: '/publications/shop', component: PublicationsShopView}
 ]
 
 const router = createRouter({
@@ -28,6 +30,7 @@ app.use(PrimeVue, {
             prefix: 'p',
             darkModeSelector: 'system',
             cssLayer: false
+
         }
     }
 });
