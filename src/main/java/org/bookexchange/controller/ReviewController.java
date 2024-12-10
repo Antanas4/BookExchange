@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api")
@@ -24,4 +26,13 @@ public class ReviewController {
         }
     }
 
+    @GetMapping("/reviews/{username}")
+    public ResponseEntity<?> getRecipientReviews(@PathVariable String username){
+        try{
+            List<ReviewDto> reviews = reviewService.getRecipientReviews(username);
+            return ResponseEntity.ok(reviews);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
