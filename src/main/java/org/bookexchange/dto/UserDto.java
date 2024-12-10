@@ -7,10 +7,11 @@ import org.bookexchange.model.enums.UserRole;
 import java.time.LocalDate;
 
 @Data
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+//@Getter
+//@Setter
+//@NoArgsConstructor
+//@AllArgsConstructor
+
 public class UserDto {
     private String name;
     private String surname;

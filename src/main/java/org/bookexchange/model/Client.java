@@ -17,13 +17,16 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 @Entity
 public class Client extends User{
     private String address;
     private LocalDate dateOfBirth;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Publication> ownedPublications = new ArrayList<>();
+    @OneToMany(mappedBy = "reviewRecipient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> myReviews = new ArrayList<>();
+    @OneToMany(mappedBy = "reviewAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> authoredReviews = new ArrayList<>();
 
     public Client(String name, String surname, String username, String password, String address, LocalDate dateOfBirth, UserRole role) {
         super(name, surname, username, password, role);
