@@ -1,4 +1,5 @@
 <template>
+  <AdminMenuBar/>
   <h1 class="page-header">Manage Users</h1>
   <div class="container">
     <div class="form">
@@ -112,6 +113,7 @@ import AutoComplete from "primevue/autocomplete";
 
 import {computed, ref} from "vue";
 import {createUser, getUsers, updateUser, deleteUser} from '@/service/ManageUsersService';
+import AdminMenuBar from "@/components/AdminMenuBar.vue";
 
 const name = ref('');
 const surname = ref('');

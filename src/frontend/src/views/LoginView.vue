@@ -36,7 +36,7 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
 import { ref } from "vue";
-import { login } from "@/service/LoginService";
+import { login, getCurrentUserRoles } from "@/service/AuthenticationService";
 import DialogMessage from '@/components/DialogMessage.vue';
 
 const router = useRouter();
@@ -52,9 +52,15 @@ const handleLogin = async () => {
 
   try {
     const response = await login(loginRequestDto);
-    console.log(response);
     if (response === username.value) {
-      await router.push('/publications');
+      const roles = await getCurrentUserRoles();
+      if (roles.includes('ROLE_CLIENT')) {
+        await router.push('/publications');
+      } else if (roles.includes('ROLE_ADMIN')) {
+        await router.push('/users');
+      } else {
+        showDialog.value = true;
+      }
     }
   } catch (error) {
     console.error("Login failed", error);

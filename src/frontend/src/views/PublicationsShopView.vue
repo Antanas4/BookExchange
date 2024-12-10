@@ -1,4 +1,6 @@
 <template>
+  <ClientMenuBar v-if="CurrentUserRole === 'ROLE_CLIENT'"/>
+  <AdminMenuBar v-if="CurrentUserRole === 'ROLE_ADMIN'"/>
   <div class="card">
     <DataView :value="publications" paginator :rows="5">
       <template #list="slotProps">
@@ -6,7 +8,7 @@
           <div v-for="(item, index) in slotProps.items" :key="index" class="publication-item">
             <div :class="['publication-container', index !== 0 ? 'border-top' : '']">
               <div class="owner-tag">
-                <Tag :value="item.ownerUsername" />
+                <Tag :value="item.ownerUsername"/>
               </div>
               <div class="publication-details">
                 <div class="title-author">
@@ -36,20 +38,31 @@ import Button from 'primevue/button';
 import DataView from 'primevue/dataview';
 import Tag from "primevue/tag";
 import {getPublicationsShopService, buyPublication} from '@/service/ManagePublicationsService';
+import ClientMenuBar from "@/components/ClientMenuBar.vue";
+import AdminMenuBar from "@/components/AdminMenuBar.vue";
+import {getCurrentUserRoles} from "@/service/AuthenticationService";
 
 const publications = ref([]);
+const CurrentUserRole = ref('');
 
 onMounted(async () => {
   try {
     publications.value = await getPublicationsShopService();
     console.log(publications.value);
+
+    const roles = await getCurrentUserRoles();
+    if (roles.includes('ROLE_CLIENT')) {
+      CurrentUserRole.value = 'ROLE_CLIENT';
+    } else if (roles.includes('ROLE_ADMIN')) {
+      CurrentUserRole.value = 'ROLE_ADMIN';
+    }
   } catch (error) {
-    console.error('Error fetching publications:', error);
+    console.error('Error fetching data:', error);
   }
 });
 
 const handleBuyPublication = async (publication) => {
-  try{
+  try {
     await buyPublication(publication);
     publications.value = await getPublicationsShopService();
   } catch (error) {

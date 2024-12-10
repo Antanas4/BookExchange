@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const PUBLICATIONS_URL = '/api/client/publications';
+const PUBLICATIONS_URL = '/api/publications';
 
 export const createPublicationService = async (publicationDto, ownerUsername) => {
     try {

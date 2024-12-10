@@ -94,7 +94,7 @@ public class PublicationService {
     }
 
     public List<PublicationDto> getPublicationShop() {
-        String currentUser = userService.getCurrentUser();
+        String currentUser = userService.getCurrentUsername();
         List<Publication> publications = publicationRepository.findAllExcludingCurrentUser(currentUser);
         List<PublicationDto> publicationDtos = new ArrayList<>();
         for (Publication publication : publications) {
@@ -142,7 +142,7 @@ public class PublicationService {
         if (publication.isPresent()) {
             Publication publicationBought = publication.get();
             TransactionDto transactionDto = new TransactionDto();
-            String currentUser = userService.getCurrentUser();
+            String currentUser = userService.getCurrentUsername();
             Optional<User> RecipientClient = userRepository.findByUsername(currentUser);
             publicationBought.setStatus(PublicationStatus.SOLD);
             transactionDto.setPublicationId(publicationBought.getId());

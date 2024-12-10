@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/client/publications")
+@RequestMapping("/api/publications")
 
 public class PublicationsController {
     private static final Logger logger = LoggerFactory.getLogger(PublicationsController.class);

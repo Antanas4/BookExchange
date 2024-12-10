@@ -2,11 +2,9 @@ package org.bookexchange.controller;
 
 import lombok.AllArgsConstructor;
 import org.bookexchange.dto.UserDto;
-import org.bookexchange.model.User;
 import org.bookexchange.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -89,7 +87,22 @@ public class UserController {
     }
 
     @GetMapping("/currentUser")
-    public String currentUserName() {
-        return userService.getCurrentUser();
+    public ResponseEntity<String> getCurrentUsername() {
+        try {
+            String username = userService.getCurrentUsername();
+            return ResponseEntity.ok().body(username);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/currentUser/roles")
+    public ResponseEntity<List<String>> getCurrentUserRole() {
+        try {
+            List<String> roles = userService.getCurrentUserRole();
+            return ResponseEntity.ok(roles);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
     }
 }
