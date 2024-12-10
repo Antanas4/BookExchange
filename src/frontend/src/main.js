@@ -11,6 +11,7 @@ import LoginView from "@/views/LoginView.vue";
 import PublicationsShopView from "@/views/PublicationsShopView.vue";
 import PermissionDeniedView from "@/views/PermissionDeniedView.vue";
 import {getCurrentUserRoles, isLoggedIn} from "@/service/AuthenticationService";
+import ClientDetailsView from "@/views/ClientDetailsView.vue";
 
 "@/service/AuthenticationService"
 
@@ -44,6 +45,7 @@ const routes = [
         component: ManagePublicationsView,
         meta: { requiresRole: 'ROLE_CLIENT' }
     },
+    { path: '/client/:ownerUsername', component: ClientDetailsView, props: true },
     { path: '/auth', component: LoginView },
     { path: '/publications/shop', component: PublicationsShopView },
     { path: '/403', component: PermissionDeniedView },

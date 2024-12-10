@@ -7,9 +7,9 @@
         <div class="publication-list">
           <div v-for="(item, index) in slotProps.items" :key="index" class="publication-item">
             <div :class="['publication-container', index !== 0 ? 'border-top' : '']">
-              <div class="owner-tag">
-                <Tag :value="item.ownerUsername"/>
-              </div>
+              <router-link :to="'/client/' + item.ownerUsername">
+                <Tag :value="item.ownerUsername" />
+              </router-link>
               <div class="publication-details">
                 <div class="title-author">
                   <span class="title">{{ item.title }}</span>
