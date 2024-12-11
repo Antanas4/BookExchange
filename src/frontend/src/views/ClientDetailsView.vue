@@ -29,7 +29,7 @@
         </VirtualScroller>
       </div>
 
-      <Button @click="showReviewDialog = true" class="addReviewBtn">Add Review</Button>
+      <Button @click="showReviewDialog = true" :disabled="CurrentUserRole === 'ROLE_ADMIN'" class="addReviewBtn">Add Review</Button>
     </div>
   </div>
 
