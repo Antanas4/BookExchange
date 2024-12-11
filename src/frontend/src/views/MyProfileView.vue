@@ -99,11 +99,20 @@
         <Button label="OK" @click="showDialog = false"/>
       </Dialog>
 
-      <!-- My Publications Table -->
       <div class="card-publication-list">
         <h2 class="card-header">My Publications</h2>
-        <DataTable :value="myPublications" tableStyle="min-width: 50rem">
-          <Column field="id" header="id"/>
+        <AutoComplete
+            v-model="filteredTypeForTable"
+            :suggestions="filteredTypes"
+            @complete="searchTypes"
+            :virtualScrollerOptions="{ itemSize: 38 }"
+            optionLabel="label"
+            dropdown
+            forceSelection
+            placeholder="Select Publication Type"
+        />
+        <DataTable :value="filteredPublications" tableStyle="min-width: 50rem">
+          <Column field="id" header="ID"/>
           <Column field="author" header="Author"/>
           <Column field="title" header="Title"/>
           <Column field="price" header="Price"/>
@@ -184,6 +193,11 @@ const visibleDialog = ref(false);
 const showDialog = ref(false);
 const dialogMessage = ref('');
 
+// const filteredPublications = computed(() => {
+//   if (!selectedType.value) return myPublications.value;
+//   return myPublications.value.filter(pub => pub.publicationType === selectedType.value.label);
+// });
+
 const formInputWarning = ref({
   ownerUsername: '',
   title: '',
@@ -223,6 +237,12 @@ let publicationDto = ref({
 
 
 const filteredTypes = ref([]);
+const filteredTypeForTable = ref(null);
+const filteredPublications = computed(() => {
+  // Apply the table's filter, not the form filter
+  if (!filteredTypeForTable.value) return myPublications.value;
+  return myPublications.value.filter(pub => pub.publicationType === filteredTypeForTable.value.label);
+});
 
 import axios from 'axios';
 import {getCurrentUserRoles} from "@/service/AuthenticationService";

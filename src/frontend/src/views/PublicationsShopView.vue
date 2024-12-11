@@ -21,6 +21,10 @@
                     <span class="value">{{ item.author }}</span>
                   </div>
                   <div class="label-value-pair">
+                    <div class="label">Type:</div>
+                    <span class="value">{{ item.publicationType }}</span>
+                  </div>
+                  <div class="label-value-pair">
                     <div class="label">Status:</div>
                     <span class="value">{{ item.status }}</span>
                   </div>
