@@ -140,23 +140,23 @@
         </DataTable>
       </div>
 
-      <!-- Borrowed Publications Table -->
-      <div class="card-publication-list">
-        <h2 class="card-header">Borrowed Publications</h2>
-        <DataTable :value="borrowedPublications" tableStyle="min-width: 50rem">
-          <Column field="id" header="ID"/>
-          <Column field="author" header="Author"/>
-          <Column field="title" header="Title"/>
-          <Column field="price" header="Price"/>
-          <Column field="publicationType" header="Publication Type"/>
-          <Column field="ownerUsername" header="Owner Username"/>
-          <Column header="Actions">
-            <template #body="slotProps">
-              <Button icon="pi pi-eye" outlined rounded @click="viewPublication(slotProps.data)"/>
-            </template>
-          </Column>
-        </DataTable>
-      </div>
+<!--      &lt;!&ndash; Borrowed Publications Table &ndash;&gt;-->
+<!--      <div class="card-publication-list">-->
+<!--        <h2 class="card-header">Borrowed Publications</h2>-->
+<!--        <DataTable :value="borrowedPublications" tableStyle="min-width: 50rem">-->
+<!--          <Column field="id" header="ID"/>-->
+<!--          <Column field="author" header="Author"/>-->
+<!--          <Column field="title" header="Title"/>-->
+<!--          <Column field="price" header="Price"/>-->
+<!--          <Column field="publicationType" header="Publication Type"/>-->
+<!--          <Column field="ownerUsername" header="Owner Username"/>-->
+<!--          <Column header="Actions">-->
+<!--            <template #body="slotProps">-->
+<!--              <Button severity="success" label="Return"  @click="handleReturnPublication(slotProps.data.id)"/>-->
+<!--            </template>-->
+<!--          </Column>-->
+<!--        </DataTable>-->
+<!--      </div>-->
 
     </div>
   </div>
@@ -176,7 +176,8 @@ import {
   // getPublicationsService,
   updatePublicationService,
   deletePublicationService,
-  createPublicationService
+  createPublicationService,
+  // returnPublication
 } from "@/service/ManagePublicationsService";
 
 const ownerUsername = ref('');
@@ -239,7 +240,6 @@ let publicationDto = ref({
 const filteredTypes = ref([]);
 const filteredTypeForTable = ref(null);
 const filteredPublications = computed(() => {
-  // Apply the table's filter, not the form filter
   if (!filteredTypeForTable.value) return myPublications.value;
   return myPublications.value.filter(pub => pub.publicationType === filteredTypeForTable.value.label);
 });
@@ -459,10 +459,16 @@ onMounted(async () => {
 });
 
 // Handle view publication
-const viewPublication = (publication) => {
-  console.log('View publication:', publication);
-  // Implement logic to view the publication details
-};
+// const handleReturnPublication = async (publicationId) => {
+//   try {
+//     await returnPublication(publicationId);
+//   } catch (error) {
+//     console.error('Error fetching publications:', error);
+//   } finally {
+//     await fetchMyPublications();
+//     await fetchBorrowedPublications();
+//   }
+// };
 
 fetchMyPublications();
 </script>

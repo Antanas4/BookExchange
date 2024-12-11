@@ -48,4 +48,13 @@ public class PublicationDto {
         this.publicationType = publicationType;
         this.status = status;
     }
+
+    public PublicationDto(int id, String author, String title, double price, String publicationType, String username) {
+        this.id = id;
+        this.author = author;
+        this.title = title;
+        this.price = price;
+        this.publicationType = publicationType;
+        this.ownerUsername = username;
+    }
 }

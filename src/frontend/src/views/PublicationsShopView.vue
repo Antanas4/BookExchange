@@ -41,9 +41,10 @@
                   </Button>
                   <Button
                       class="reserve-button"
+                      @click="handleBorrowPublication(item)"
                       :disabled="CurrentUserRole === 'ROLE_ADMIN' || item.status === 'SOLD' || item.status === 'RESERVED'"
                   >
-                    Reserve
+                    Borrow
                   </Button>
                 </div>
               </div>
@@ -60,7 +61,7 @@ import {ref, onMounted} from 'vue';
 import Button from 'primevue/button';
 import DataView from 'primevue/dataview';
 import Tag from "primevue/tag";
-import {getPublicationsShopService, buyPublication} from '@/service/ManagePublicationsService';
+import {getPublicationsShopService, buyPublication, borrowPublication} from '@/service/ManagePublicationsService';
 import ClientMenuBar from "@/components/ClientMenuBar.vue";
 import AdminMenuBar from "@/components/AdminMenuBar.vue";
 import {getCurrentUserRoles} from "@/service/AuthenticationService";
@@ -87,6 +88,15 @@ onMounted(async () => {
 const handleBuyPublication = async (publication) => {
   try {
     await buyPublication(publication);
+    publications.value = await getPublicationsShopService();
+  } catch (error) {
+    console.error('Error fetching publications:', error);
+  }
+}
+
+const handleBorrowPublication = async (publication) => {
+  try {
+    await borrowPublication(publication);
     publications.value = await getPublicationsShopService();
   } catch (error) {
     console.error('Error fetching publications:', error);

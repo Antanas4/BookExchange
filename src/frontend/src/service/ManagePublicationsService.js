@@ -57,3 +57,21 @@ export const buyPublication = async (publication) => {
         throw new Error("Error fetching publications: " + error.message);
     }
 };
+
+export const borrowPublication = async (publication) => {
+    try {
+        await axios.put(`${PUBLICATIONS_URL}/shop/borrow/${publication.id}`);
+    } catch (error) {
+        console.error("Error borrowing publications: ", error.message);
+        throw new Error("Error borrowing publications: " + error.message);
+    }
+};
+
+export const returnPublication = async (publicationId) => {
+    try {
+        await axios.put(`${PUBLICATIONS_URL}/shop/return/${publicationId}`);
+    } catch (error) {
+        console.error("Error returning publications: ", error.message);
+        throw new Error("Error returning publications: " + error.message);
+    }
+};

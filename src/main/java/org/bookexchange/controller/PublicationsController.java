@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bookexchange.dto.PublicationDto;
-import org.bookexchange.dto.ReviewDto;
 import org.bookexchange.service.PublicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,21 +76,31 @@ public class PublicationsController {
         }
     }
 
-//    @PutMapping("/shop/reserve")
-//    public ResponseEntity<String> reservePublication(@RequestBody PublicationDto publicationDto) {
-//        try{
-//            publicationService.reservePublication(publicationDto);
-//            return ResponseEntity.ok("Publication reserved successfully.");
-//        } catch (Exception e){
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-//        }
-//    }
+    @PutMapping("/shop/borrow/{publicationId}")
+    public ResponseEntity<String> borrowPublication(@PathVariable Integer publicationId) {
+        try{
+            publicationService.borrowPublication(publicationId);
+            return ResponseEntity.ok("Publication reserved successfully.");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
     @PutMapping ("/shop/buy/{publicationId}")
     public ResponseEntity<String> buyPublication(@PathVariable Integer publicationId) {
         try{
             publicationService.buyPublication(publicationId);
             return ResponseEntity.ok("Publication bought successfully.");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping ("/shop/return/{publicationId}")
+    public ResponseEntity<String> returnPublication(@PathVariable Integer publicationId) {
+        try{
+            publicationService.returnPublication(publicationId);
+            return ResponseEntity.ok("Publication borrowed successfully.");
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

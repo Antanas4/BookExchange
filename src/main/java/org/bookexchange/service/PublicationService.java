@@ -129,16 +129,21 @@ public class PublicationService {
         return dto;
     }
 
-//    public void reservePublication(PublicationDto publicationDto) {
-//        Optional<Publication> publication = publicationRepository.findById(publicationDto.getId());
-//        if (publication.isPresent()) {
-//            Publication publicationToReserve = publication.get();
-//            Transaction transaction = new Transaction();
-//            publicationToReserve.setStatus(PublicationStatus.RESERVED);
-//            transaction.setOwnerId(publicationToReserve.getOwner().getId());
-//            transaction.setRecipientId(publicationDto.get);
-//        }
-//    }
+    public void borrowPublication(Integer publicationId) {
+        Optional<Publication> publication = publicationRepository.findById(publicationId);
+        if (publication.isPresent()) {
+            Publication publicationReserved = publication.get();
+            TransactionDto transactionDto = new TransactionDto();
+            String currentUser = userService.getCurrentUsername();
+            Optional<User> RecipientClient = userRepository.findByUsername(currentUser);
+            publicationReserved.setStatus(PublicationStatus.RESERVED);
+            transactionDto.setPublicationId(publicationReserved.getId());
+            transactionDto.setOwnerId(publicationReserved.getOwner().getId());
+            transactionDto.setRecipientId(RecipientClient.get().getId());
+            transactionDto.setTransactionType(TransactionType.RENT);
+            transactionService.createTransaction(transactionDto);
+        }
+    }
 
     public void buyPublication(Integer publicationId) {
         Optional<Publication> publication = publicationRepository.findById(publicationId);
@@ -231,6 +236,7 @@ public class PublicationService {
                 .map(transaction -> {
                     Publication publication = transaction.getPublication();
                     return new PublicationDto(
+                            publication.getId(),
                             publication.getAuthor(),
                             publication.getTitle(),
                             publication.getPrice(),
@@ -239,5 +245,21 @@ public class PublicationService {
                     );
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void returnPublication(Integer publicationId) {
+        Optional<Publication> publication = publicationRepository.findById(publicationId);
+        if (publication.isPresent()) {
+            Publication publicationReturned = publication.get();
+            TransactionDto transactionDto = new TransactionDto();
+            String currentUser = userService.getCurrentUsername();
+            Optional<User> RecipientClient = userRepository.findByUsername(currentUser);
+            publicationReturned.setStatus(PublicationStatus.AVAILABLE);
+            transactionDto.setPublicationId(publicationReturned.getId());
+            transactionDto.setOwnerId(publicationReturned.getOwner().getId());
+            transactionDto.setRecipientId(RecipientClient.get().getId());
+            transactionDto.setTransactionType(TransactionType.RETURN);
+            transactionService.createTransaction(transactionDto);
+        }
     }
 }

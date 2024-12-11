@@ -232,7 +232,7 @@ const handleCreateUser = async () => {
 
   try {
     await createUser(userDto);
-    dialogMessage.value = "User created successfully." + userDto.userType;
+    dialogMessage.value = "User created successfully.";
     showDialog.value = true;
   } catch (error) {
     dialogMessage.value = error.message;

@@ -18,12 +18,12 @@ const username = ref(''); // Holds the current user's username
 
 // Define the navigation links
 const navLinks = ref([
-  {
-    label: 'Manage Publications',
-    command: () => {
-      router.push('/publications');
-    }
-  },
+  // {
+  //   label: 'Manage Publications',
+  //   command: () => {
+  //     router.push('/publications');
+  //   }
+  // },
   {
     label: 'Publications',
     command: () => {
