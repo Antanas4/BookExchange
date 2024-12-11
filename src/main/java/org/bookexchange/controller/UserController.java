@@ -53,7 +53,6 @@ public class UserController {
         }
     }
 
-
     @GetMapping("/{username}")
     public ResponseEntity<UserDto> findUserByUsername(@PathVariable String username) {
         Optional<UserDto> userDto = userService.findUserByUsername(username);

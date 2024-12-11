@@ -95,7 +95,7 @@ onMounted(async () => {
     }
     if (ownerUsername) {
       await fetchClientDetails(ownerUsername);
-      await fetchClientReviews(ownerUsername)
+      await fetchClientReviews(ownerUsername);
     }
   } catch (error) {
     console.error('Error fetching roles:', error);

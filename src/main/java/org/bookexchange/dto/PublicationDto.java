@@ -22,4 +22,21 @@ public class PublicationDto {
     private String publicationType;
     private String ownerUsername;
     private PublicationStatus status;
+
+    public PublicationDto(String author, String title, double price, String publicationType, PublicationStatus status) {
+        this.author = author;
+        this.title = title;
+        this.price = price;
+        this.publicationType = publicationType;
+        this.status = status;
+
+    }
+
+    public PublicationDto(String author, String title, double price, String publicationType, String username) {
+        this.author = author;
+        this.title = title;
+        this.price = price;
+        this.publicationType = publicationType;
+        this.ownerUsername = username;
+    }
 }

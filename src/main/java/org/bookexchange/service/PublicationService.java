@@ -8,10 +8,12 @@ import org.bookexchange.model.enums.PublicationStatus;
 import org.bookexchange.model.enums.TransactionType;
 import org.bookexchange.repository.ClientRepository;
 import org.bookexchange.repository.PublicationRepository;
+import org.bookexchange.repository.TransactionRepository;
 import org.bookexchange.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +24,7 @@ public class PublicationService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final TransactionService transactionService;
+    private final TransactionRepository transactionRepository;
 
 
     public void createPublication(PublicationDto publicationDto) {
@@ -153,4 +156,73 @@ public class PublicationService {
         }
     }
 
+    public List<PublicationDto> getMyPublications() {
+        String username = userService.getCurrentUsername();
+        Client client = clientRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        return client.getOwnedPublications().stream()
+                .map(publication -> new PublicationDto(
+                        publication.getAuthor(),
+                        publication.getTitle(),
+                        publication.getPrice(),
+                        getPublicationType(publication),
+                        publication.getStatus()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    private String getPublicationType(Publication publication) {
+        if (publication instanceof Book) {
+            return "Book";
+        } else if (publication instanceof ComicBook) {
+            return "ComicBook";
+        } else if (publication instanceof Magazine) {
+            return "Magazine";
+        } else {
+            return "Unknown";
+        }
+    }
+
+    public List<PublicationDto> getMyBoughtPublications() {
+        String username = userService.getCurrentUsername();
+        Client client = clientRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        List<Transaction> transactions = transactionRepository.findByRecipientIdAndType(client.getId(), TransactionType.BUY);
+
+        return transactions.stream()
+                .map(transaction -> {
+                    Publication publication = transaction.getPublication();
+                    return new PublicationDto(
+                            publication.getAuthor(),
+                            publication.getTitle(),
+                            publication.getPrice(),
+                            getPublicationType(publication),
+                            publication.getOwner().getUsername()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<PublicationDto> getMyBorrowedPublications() {
+        String username = userService.getCurrentUsername();
+        Client client = clientRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        List<Transaction> transactions = transactionRepository.findByRecipientIdAndType(client.getId(), TransactionType.RENT);
+
+        return transactions.stream()
+                .map(transaction -> {
+                    Publication publication = transaction.getPublication();
+                    return new PublicationDto(
+                            publication.getAuthor(),
+                            publication.getTitle(),
+                            publication.getPrice(),
+                            getPublicationType(publication),
+                            publication.getOwner().getUsername()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
 }

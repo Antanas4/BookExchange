@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bookexchange.dto.PublicationDto;
+import org.bookexchange.dto.ReviewDto;
 import org.bookexchange.service.PublicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,36 @@ public class PublicationsController {
         try{
             publicationService.buyPublication(publicationId);
             return ResponseEntity.ok("Publication bought successfully.");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/myPublications")
+    public ResponseEntity<?> getMyPublications(){
+        try{
+            List<PublicationDto> publications = publicationService.getMyPublications();
+            return ResponseEntity.ok(publications);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/myPublications/bought")
+    public ResponseEntity<?> getMyBoughtPublications(){
+        try{
+            List<PublicationDto> publications = publicationService.getMyBoughtPublications();
+            return ResponseEntity.ok(publications);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/myPublications/borrowed")
+    public ResponseEntity<?> getMyBorrowedPublications(){
+        try{
+            List<PublicationDto> publications = publicationService.getMyBorrowedPublications();
+            return ResponseEntity.ok(publications);
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
