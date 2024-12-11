@@ -2,7 +2,7 @@
   <ClientMenuBar v-if="CurrentUserRole === 'ROLE_CLIENT'"/>
   <AdminMenuBar v-if="CurrentUserRole === 'ROLE_ADMIN'"/>
   <div class="profile-container">
-    <h1 class="page-header">Manage Publications</h1>
+    <h1 class="page-header">{{clientUsername}}</h1>
     <div class="container">
       <div class="form">
         <FloatLabel>
@@ -99,8 +99,6 @@
         <Button label="OK" @click="showDialog = false"/>
       </Dialog>
 
-      <h1>clientUsername</h1>
-
       <!-- My Publications Table -->
       <div class="card-publication-list">
         <h2 class="card-header">My Publications</h2>
@@ -181,7 +179,6 @@ const issueNumber = ref('');
 const illustrator = ref('');
 const selectedType = ref(null);
 const warningMessage = ref('');
-// const publications = ref([]);
 const publicationToEdit = ref(null);
 const visibleDialog = ref(false);
 const showDialog = ref(false);
@@ -375,15 +372,6 @@ const deletePublication = async (publicationId) => {
     showDialog.value = true;
   }
 };
-
-// const loadPublications = async () => {
-//   try {
-//     await getPublicationsService(publications);
-//   } catch (error) {
-//     dialogMessage.value = 'Failed to fetch publications.';
-//     showDialog.value = true;
-//   }
-// }
 
 const openEditDialog = async (publicationToEditData) => {
   publicationToEdit.value = JSON.parse(JSON.stringify(publicationToEditData));

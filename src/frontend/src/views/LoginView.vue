@@ -55,7 +55,7 @@ const handleLogin = async () => {
     if (response === username.value) {
       const roles = await getCurrentUserRoles();
       if (roles.includes('ROLE_CLIENT')) {
-        await router.push('/publications');
+        await router.push('/publications/shop');
       } else if (roles.includes('ROLE_ADMIN')) {
         await router.push('/users');
       } else {

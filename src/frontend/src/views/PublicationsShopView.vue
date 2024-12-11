@@ -8,20 +8,39 @@
           <div v-for="(item, index) in slotProps.items" :key="index" class="publication-item">
             <div :class="['publication-container', index !== 0 ? 'border-top' : '']">
               <router-link :to="'/client/' + item.ownerUsername">
-                <Tag :value="item.ownerUsername" />
+                <Tag :value="item.ownerUsername"/>
               </router-link>
               <div class="publication-details">
                 <div class="title-author">
-                  <span class="title">{{ item.title }}</span>
-                  <div class="author">{{ item.author }}</div>
-                  <div class="author">{{ item.status }}</div>
+                  <div class="label-value-pair">
+                    <div class="label">Title:</div>
+                    <span class="value">{{ item.title }}</span>
+                  </div>
+                  <div class="label-value-pair">
+                    <div class="label">Author:</div>
+                    <span class="value">{{ item.author }}</span>
+                  </div>
+                  <div class="label-value-pair">
+                    <div class="label">Status:</div>
+                    <span class="value">{{ item.status }}</span>
+                  </div>
                 </div>
               </div>
               <div class="buy-button-container">
                 <span class="price-xl">${{ item.price }}</span>
                 <div class="button-group">
-                  <Button class="buy-button" @click=handleBuyPublication(item)>Buy</Button>
-                  <Button class="reserve-button">Reserve</Button>
+                  <Button
+                      class="buy-button"
+                      @click="handleBuyPublication(item)"
+                      :disabled="CurrentUserRole === 'ROLE_ADMIN' || item.status === 'SOLD' || item.status === 'RESERVED'"
+                  >Buy
+                  </Button>
+                  <Button
+                      class="reserve-button"
+                      :disabled="CurrentUserRole === 'ROLE_ADMIN' || item.status === 'SOLD' || item.status === 'RESERVED'"
+                  >
+                    Reserve
+                  </Button>
                 </div>
               </div>
             </div>
@@ -105,14 +124,26 @@ const handleBuyPublication = async (publication) => {
   padding-left: 15px;
 }
 
-.title-author .title {
-  font-weight: bold;
-  font-size: 1.1em;
+.title-author {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.title-author .author {
-  color: #777;
-  font-size: 0.9em;
+.label-value-pair {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px; /* space between pairs */
+}
+
+.label {
+  font-weight: bold;
+  margin-right: 5px;
+  width: 80px; /* Adjust width for consistent alignment */
+}
+
+.value {
+  color: #555;
 }
 
 .buy-button-container {
