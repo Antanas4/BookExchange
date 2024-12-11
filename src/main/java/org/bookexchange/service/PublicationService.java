@@ -162,13 +162,28 @@ public class PublicationService {
                 .orElseThrow(() -> new RuntimeException("Client not found"));
 
         return client.getOwnedPublications().stream()
-                .map(publication -> new PublicationDto(
-                        publication.getAuthor(),
-                        publication.getTitle(),
-                        publication.getPrice(),
-                        getPublicationType(publication),
-                        publication.getStatus()
-                ))
+                .map(publication -> {
+                    PublicationDto dto = new PublicationDto();
+                    dto.setId(publication.getId());
+                    dto.setAuthor(publication.getAuthor());
+                    dto.setTitle(publication.getTitle());
+                    dto.setPrice(publication.getPrice());
+                    dto.setStatus(publication.getStatus());
+
+                    dto.setOwnerUsername(publication.getOwner().getUsername());
+
+                    if (publication instanceof Book) {
+                        dto.setPublicationType("Book");
+                        dto.setGenre(((Book) publication).getGenre());
+                    } else if (publication instanceof ComicBook) {
+                        dto.setPublicationType("Comic Book");
+                        dto.setIllustrator(((ComicBook) publication).getIllustrator());
+                    } else if (publication instanceof Magazine) {
+                        dto.setPublicationType("Magazine");
+                        dto.setIssueNumber(((Magazine) publication).getIssueNumber());
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
