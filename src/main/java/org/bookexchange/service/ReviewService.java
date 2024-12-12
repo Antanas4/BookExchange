@@ -21,38 +21,29 @@ public class ReviewService {
     private final UserService userService;
 
     public void addReview(ReviewDto reviewDto) {
-        Optional<Client> optionalRecipient = clientRepository.findByUsername(reviewDto.getRecipient());
-        String authorUsername = userService.getCurrentUsername();
-        Optional<Client> optionalAuthor = clientRepository.findByUsername(authorUsername);
-
-        if (optionalRecipient.isPresent() && optionalAuthor.isPresent()) {
-            Client recipient = optionalRecipient.get();
-            Client author = optionalAuthor.get();
-            LocalDateTime currentDateTime = LocalDateTime.now();
-            Review review = new Review(
-                    reviewDto.getTitle(),
-                    reviewDto.getBody(),
-                    currentDateTime,
-                    author,
-                    recipient
-            );
-            reviewRepository.save(review);
-        }
+        Client recipient = clientRepository.findByUsername(reviewDto.getRecipient());
+        Client author = clientRepository.findByUsername(userService.getCurrentUsername());
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Review review = new Review(
+                reviewDto.getTitle(),
+                reviewDto.getBody(),
+                currentDateTime,
+                author,
+                recipient
+        );
+        reviewRepository.save(review);
     }
 
     public List<ReviewDto> getRecipientReviews(String username) {
-        Optional<Client> Recipient = clientRepository.findByUsername(username);
-        if (Recipient.isPresent()) {
-            List<Review> reviews = reviewRepository.findByReviewRecipient(Recipient.get());
-            return reviews.stream()
-                    .map(review -> new ReviewDto(
-                            review.getTitle(),
-                            review.getBody(),
-                            review.getTimestamp(),
-                            review.getReviewAuthor().getUsername(),
-                            review.getReviewRecipient().getUsername()))
-                    .collect(Collectors.toList());
-        }
-        return null;
+        Client recipient = clientRepository.findByUsername(username);
+        List<Review> reviews = reviewRepository.findByReviewRecipient(recipient);
+        return reviews.stream()
+                .map(review -> new ReviewDto(
+                        review.getTitle(),
+                        review.getBody(),
+                        review.getTimestamp(),
+                        review.getReviewAuthor().getUsername(),
+                        review.getReviewRecipient().getUsername()))
+                .collect(Collectors.toList());
     }
 }

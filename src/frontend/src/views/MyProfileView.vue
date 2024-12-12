@@ -128,33 +128,21 @@
       </div>
 
       <div class="card-publication-list">
-        <h2 class="card-header">Bought Publications</h2>
-        <DataTable :value="boughtPublications" tableStyle="min-width: 50rem">
+        <h2 class="card-header">Borrowed Publications</h2>
+        <DataTable :value="borrowedPublications" tableStyle="min-width: 50rem">
+          <Column field="id" header="ID"/>
           <Column field="author" header="Author"/>
           <Column field="title" header="Title"/>
           <Column field="price" header="Price"/>
           <Column field="publicationType" header="Publication Type"/>
           <Column field="ownerUsername" header="Owner Username"/>
+          <Column header="Actions">
+            <template #body="slotProps">
+              <Button severity="success" label="Return"  @click="handleReturnPublication(slotProps.data.id)"/>
+            </template>
+          </Column>
         </DataTable>
       </div>
-
-<!--      &lt;!&ndash; Borrowed Publications Table &ndash;&gt;-->
-<!--      <div class="card-publication-list">-->
-<!--        <h2 class="card-header">Borrowed Publications</h2>-->
-<!--        <DataTable :value="borrowedPublications" tableStyle="min-width: 50rem">-->
-<!--          <Column field="id" header="ID"/>-->
-<!--          <Column field="author" header="Author"/>-->
-<!--          <Column field="title" header="Title"/>-->
-<!--          <Column field="price" header="Price"/>-->
-<!--          <Column field="publicationType" header="Publication Type"/>-->
-<!--          <Column field="ownerUsername" header="Owner Username"/>-->
-<!--          <Column header="Actions">-->
-<!--            <template #body="slotProps">-->
-<!--              <Button severity="success" label="Return"  @click="handleReturnPublication(slotProps.data.id)"/>-->
-<!--            </template>-->
-<!--          </Column>-->
-<!--        </DataTable>-->
-<!--      </div>-->
 
     </div>
   </div>
@@ -176,7 +164,7 @@ import {
   createPublication,
   getMyPublications,
   getMyBorrowedPublications,
-  getMyBoughtPublications,
+  returnPublication,
 } from "@/service/ManagePublicationsService";
 
 const ownerUsername = ref('');
@@ -247,7 +235,6 @@ const route = useRoute();
 const clientUsername = route.params.clientUsername;
 const CurrentUserRole = ref('');
 const myPublications = ref([]);
-const boughtPublications = ref([]);
 const borrowedPublications = ref([]);
 
 const searchTypes = (event) => {
@@ -413,21 +400,22 @@ const handleGetMyPublications = async () => {
   }
 };
 
-const handleGetMyBoughtPublications = async () => {
+const handleGetMyBorrowedPublications = async () => {
   try {
-    await getMyBoughtPublications(boughtPublications);
-
+    await getMyBorrowedPublications(borrowedPublications);
   } catch (error) {
-    console.error('Error fetching bought publications:', error);
+    console.error('Error fetching borrowed publications:', error);
   }
 };
 
-const handleGetMyBorrowedPublications = async () => {
+const handleReturnPublication = async (publicationId) => {
   try {
-    const response = getMyBorrowedPublications();
-    borrowedPublications.value = response.data;
+    await returnPublication(publicationId);
   } catch (error) {
-    console.error('Error fetching borrowed publications:', error);
+    console.error('Error fetching publications:', error);
+  } finally {
+    await getMyPublications();
+    await handleGetMyBorrowedPublications();
   }
 };
 
@@ -441,7 +429,6 @@ onMounted(async () => {
     }
     if (clientUsername) {
       await handleGetMyPublications();
-      await handleGetMyBoughtPublications();
       await handleGetMyBorrowedPublications();
     }
   } catch (error) {
@@ -449,19 +436,6 @@ onMounted(async () => {
   }
 
 });
-
-// Handle view publication
-// const handleReturnPublication = async (publicationId) => {
-//   try {
-//     await returnPublication(publicationId);
-//   } catch (error) {
-//     console.error('Error fetching publications:', error);
-//   } finally {
-//     await fetchMyPublications();
-//     await handleGetMyBorrowedPublications();
-//   }
-// };
-
 handleGetMyPublications();
 </script>
 

@@ -116,16 +116,6 @@ public class PublicationsController {
         }
     }
 
-    @GetMapping("/myPublications/bought")
-    public ResponseEntity<?> getMyBoughtPublications(){
-        try{
-            List<PublicationDto> publications = publicationService.getMyBoughtPublications();
-            return ResponseEntity.ok(publications);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
     @GetMapping("/myPublications/borrowed")
     public ResponseEntity<?> getMyBorrowedPublications(){
         try{

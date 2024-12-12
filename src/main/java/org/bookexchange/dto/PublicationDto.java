@@ -23,38 +23,13 @@ public class PublicationDto {
     private String ownerUsername;
     private PublicationStatus status;
 
-    public PublicationDto(String author, String title, double price, String publicationType, PublicationStatus status) {
-        this.author = author;
-        this.title = title;
-        this.price = price;
-        this.publicationType = publicationType;
-        this.status = status;
-
-    }
-
-    public PublicationDto(String author, String title, double price, String publicationType, String username) {
-        this.author = author;
-        this.title = title;
-        this.price = price;
-        this.publicationType = publicationType;
-        this.ownerUsername = username;
-    }
-
-    public PublicationDto(int id, String author, String title, double price, String publicationType, PublicationStatus status) {
-        this.id = id;
-        this.author = author;
-        this.title = title;
-        this.price = price;
-        this.publicationType = publicationType;
-        this.status = status;
-    }
-
-    public PublicationDto(int id, String author, String title, double price, String publicationType, String username) {
+    public PublicationDto(int id, String author, String title, double price, String publicationType, String username, PublicationStatus publicationStatus) {
         this.id = id;
         this.author = author;
         this.title = title;
         this.price = price;
         this.publicationType = publicationType;
         this.ownerUsername = username;
+        this.status = publicationStatus;
     }
 }

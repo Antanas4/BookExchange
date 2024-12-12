@@ -33,6 +33,4 @@ public class Client extends User{
         this.address = address;
         this.dateOfBirth = dateOfBirth;
     }
-
-
 }

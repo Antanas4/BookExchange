@@ -90,7 +90,7 @@ const handleBuyPublication = async (publication) => {
     await buyPublication(publication);
     publications.value = await getPublicationsShop();
   } catch (error) {
-    console.error('Error fetching publications:', error);
+    console.error('Error buying publications:', error);
   }
 }
 
@@ -99,7 +99,7 @@ const handleBorrowPublication = async (publication) => {
     await borrowPublication(publication);
     publications.value = await getPublicationsShop();
   } catch (error) {
-    console.error('Error fetching publications:', error);
+    console.error('Error borrowing publications:', error);
   }
 }
 </script>

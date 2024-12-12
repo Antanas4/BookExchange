@@ -28,8 +28,7 @@ public class PublicationService {
 
 
     public void createPublication(PublicationDto publicationDto) {
-        Client client = clientRepository.findByUsername(publicationDto.getOwnerUsername())
-                .orElseThrow(() -> new RuntimeException("Client not found for username: " + publicationDto.getOwnerUsername()));
+        Client client = clientRepository.findByUsername(publicationDto.getOwnerUsername());
         Publication publication;
         switch (publicationDto.getPublicationType()) {
             case "Book" -> {
@@ -135,11 +134,11 @@ public class PublicationService {
             Publication publicationReserved = publication.get();
             TransactionDto transactionDto = new TransactionDto();
             String currentUser = userService.getCurrentUsername();
-            Optional<User> RecipientClient = userRepository.findByUsername(currentUser);
+            Client recipientClient = clientRepository.findByUsername(currentUser);
             publicationReserved.setStatus(PublicationStatus.RESERVED);
             transactionDto.setPublicationId(publicationReserved.getId());
             transactionDto.setOwnerId(publicationReserved.getOwner().getId());
-            transactionDto.setRecipientId(RecipientClient.get().getId());
+            transactionDto.setRecipientId(recipientClient.getId());
             transactionDto.setTransactionType(TransactionType.RENT);
             transactionService.createTransaction(transactionDto);
         }
@@ -150,32 +149,40 @@ public class PublicationService {
         if (publication.isPresent()) {
             Publication publicationBought = publication.get();
             TransactionDto transactionDto = new TransactionDto();
-            String currentUser = userService.getCurrentUsername();
-            Optional<User> RecipientClient = userRepository.findByUsername(currentUser);
+            String username = userService.getCurrentUsername();
+            Client recipientClient = clientRepository.findByUsername(username);
             publicationBought.setStatus(PublicationStatus.SOLD);
             transactionDto.setPublicationId(publicationBought.getId());
             transactionDto.setOwnerId(publicationBought.getOwner().getId());
-            transactionDto.setRecipientId(RecipientClient.get().getId());
+            transactionDto.setRecipientId(recipientClient.getId());
             transactionDto.setTransactionType(TransactionType.BUY);
             transactionService.createTransaction(transactionDto);
+            recipientClient.getOwnedPublications().add(publicationBought);
         }
     }
 
     public List<PublicationDto> getMyPublications() {
         String username = userService.getCurrentUsername();
-        Client client = clientRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Client not found"));
+        Client client = clientRepository.findByUsername(username);
 
         return client.getOwnedPublications().stream()
+                // Filter out publications that are RESERVED and not owned by the client
+                .filter(publication ->
+                        !(publication.getStatus() == PublicationStatus.RESERVED
+                                && publication.getOwner().getId() != client.getId())) // Use '!=' for int comparison
                 .map(publication -> {
                     PublicationDto dto = new PublicationDto();
                     dto.setId(publication.getId());
                     dto.setAuthor(publication.getAuthor());
                     dto.setTitle(publication.getTitle());
                     dto.setPrice(publication.getPrice());
-                    dto.setStatus(publication.getStatus());
-
                     dto.setOwnerUsername(publication.getOwner().getUsername());
+
+                    if (publication.getOwner().getId() != client.getId()) {
+                        dto.setStatus(PublicationStatus.BOUGHT);
+                    } else {
+                        dto.setStatus(publication.getStatus());
+                    }
 
                     if (publication instanceof Book) {
                         dto.setPublicationType("Book");
@@ -192,6 +199,7 @@ public class PublicationService {
                 .collect(Collectors.toList());
     }
 
+
     private String getPublicationType(Publication publication) {
         if (publication instanceof Book) {
             return "Book";
@@ -204,46 +212,29 @@ public class PublicationService {
         }
     }
 
-    public List<PublicationDto> getMyBoughtPublications() {
-        String username = userService.getCurrentUsername();
-        Client client = clientRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Client not found"));
-
-        List<Transaction> transactions = transactionRepository.findByRecipientIdAndType(client.getId(), TransactionType.BUY);
-
-        return transactions.stream()
-                .map(transaction -> {
-                    Publication publication = transaction.getPublication();
-                    return new PublicationDto(
-                            publication.getAuthor(),
-                            publication.getTitle(),
-                            publication.getPrice(),
-                            getPublicationType(publication),
-                            publication.getOwner().getUsername()
-                    );
-                })
-                .collect(Collectors.toList());
-    }
-
     public List<PublicationDto> getMyBorrowedPublications() {
         String username = userService.getCurrentUsername();
-        Client client = clientRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Client not found"));
-
+        Client client = clientRepository.findByUsername(username);
         List<Transaction> transactions = transactionRepository.findByRecipientIdAndType(client.getId(), TransactionType.RENT);
 
         return transactions.stream()
                 .map(transaction -> {
                     Publication publication = transaction.getPublication();
+
+                    if (publication.getStatus() != PublicationStatus.RESERVED) {
+                        return null;
+                    }
                     return new PublicationDto(
                             publication.getId(),
                             publication.getAuthor(),
                             publication.getTitle(),
                             publication.getPrice(),
                             getPublicationType(publication),
-                            publication.getOwner().getUsername()
+                            publication.getOwner().getUsername(),
+                            PublicationStatus.BORROWED
                     );
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
@@ -253,13 +244,14 @@ public class PublicationService {
             Publication publicationReturned = publication.get();
             TransactionDto transactionDto = new TransactionDto();
             String currentUser = userService.getCurrentUsername();
-            Optional<User> RecipientClient = userRepository.findByUsername(currentUser);
+            Client recipientClient = clientRepository.findByUsername(currentUser);
             publicationReturned.setStatus(PublicationStatus.AVAILABLE);
             transactionDto.setPublicationId(publicationReturned.getId());
             transactionDto.setOwnerId(publicationReturned.getOwner().getId());
-            transactionDto.setRecipientId(RecipientClient.get().getId());
+            transactionDto.setRecipientId(recipientClient.getId());
             transactionDto.setTransactionType(TransactionType.RETURN);
             transactionService.createTransaction(transactionDto);
+            recipientClient.getOwnedPublications().remove(publicationReturned);
         }
     }
 }

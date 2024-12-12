@@ -59,12 +59,7 @@ export const buyPublication = async (publication) => {
 };
 
 export const borrowPublication = async (publication) => {
-    try {
-        await axios.put(`${PUBLICATIONS_URL}/shop/borrow/${publication.id}`);
-    } catch (error) {
-        console.error("Error borrowing publications: ", error.message);
-        throw new Error("Error borrowing publications: " + error.message);
-    }
+    await axios.put(`${PUBLICATIONS_URL}/shop/borrow/${publication.id}`);
 };
 
 export const returnPublication = async (publicationId) => {
@@ -84,18 +79,11 @@ export const getMyPublications = async (myPublications) =>{
         console.error(error.message);
     }
 }
-export const getMyBoughtPublications = async (boughtPublications) =>{
-    try{
-        const response =  await axios.get(`${PUBLICATIONS_URL}/myPublications/bought`);
-        boughtPublications.value = response.data;
-    } catch (error){
-        console.error(error.message);
-    }
-}
 
-export const getMyBorrowedPublications = async () =>{
+export const getMyBorrowedPublications = async (borrowedPublications) =>{
     try{
-        return await axios.get(`${PUBLICATIONS_URL}/myPublications/borrowed`);
+        const response = await axios.get(`${PUBLICATIONS_URL}/myPublications/borrowed`);
+        borrowedPublications.value = response.data;
     } catch (error){
         console.error(error.message);
     }
