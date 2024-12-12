@@ -62,7 +62,7 @@
           <template #body="slotProps">
             <Button icon="pi pi-pencil" outlined rounded @click="openEditDialog(slotProps.data)"/>
             <Button icon="pi pi-trash" outlined rounded severity="danger"
-                    @click="deletePublication(slotProps.data.id)"/>
+                    @click="handleDeletePublication(slotProps.data.id)"/>
           </template>
         </Column>
       </DataTable>
@@ -132,10 +132,10 @@ import Column from "primevue/column";
 import Dialog from "primevue/dialog";
 import {computed, ref} from "vue";
 import {
-  getPublicationsService,
-  updatePublicationService,
-  deletePublicationService,
-  createPublicationService
+  getPublications,
+  updatePublication,
+  deletePublication,
+  createPublication
 } from "@/service/ManagePublicationsService";
 import ClientMenuBar from "@/components/ClientMenuBar.vue";
 
@@ -307,7 +307,7 @@ const addPublication = async () => {
   };
 
   try {
-    await createPublicationService(publicationDto, ownerUsername.value);
+    await createPublication(publicationDto, ownerUsername.value);
     await loadPublications();
   } catch (error) {
     dialogMessage.value = 'Client ' + `${ownerUsername.value}` + ' does not exist.';
@@ -318,9 +318,9 @@ const addPublication = async () => {
 };
 
 
-const deletePublication = async (publicationId) => {
+const handleDeletePublication = async (publicationId) => {
   try {
-    await deletePublicationService(publicationId);
+    await deletePublication(publicationId);
     await loadPublications();
   } catch (error) {
     dialogMessage.value = 'Failed to delete publication.';
@@ -330,7 +330,7 @@ const deletePublication = async (publicationId) => {
 
 const loadPublications = async () => {
   try {
-    await getPublicationsService(publications);
+    await getPublications(publications);
   } catch (error) {
     dialogMessage.value = 'Failed to fetch publications.';
     showDialog.value = true;
@@ -345,7 +345,7 @@ const openEditDialog = async (publicationToEditData) => {
 const savePublication = async () => {
   try {
     if (publicationToEdit.value) {
-      await updatePublicationService(publicationToEdit.value);
+      await updatePublication(publicationToEdit.value);
       visibleDialog.value = false;
     }
   } catch (error) {

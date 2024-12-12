@@ -61,7 +61,7 @@ import {ref, onMounted} from 'vue';
 import Button from 'primevue/button';
 import DataView from 'primevue/dataview';
 import Tag from "primevue/tag";
-import {getPublicationsShopService, buyPublication, borrowPublication} from '@/service/ManagePublicationsService';
+import {getPublicationsShop, buyPublication, borrowPublication} from '@/service/ManagePublicationsService';
 import ClientMenuBar from "@/components/ClientMenuBar.vue";
 import AdminMenuBar from "@/components/AdminMenuBar.vue";
 import {getCurrentUserRoles} from "@/service/AuthenticationService";
@@ -71,7 +71,7 @@ const CurrentUserRole = ref('');
 
 onMounted(async () => {
   try {
-    publications.value = await getPublicationsShopService();
+    publications.value = await getPublicationsShop();
     console.log(publications.value);
 
     const roles = await getCurrentUserRoles();
@@ -88,7 +88,7 @@ onMounted(async () => {
 const handleBuyPublication = async (publication) => {
   try {
     await buyPublication(publication);
-    publications.value = await getPublicationsShopService();
+    publications.value = await getPublicationsShop();
   } catch (error) {
     console.error('Error fetching publications:', error);
   }
@@ -97,7 +97,7 @@ const handleBuyPublication = async (publication) => {
 const handleBorrowPublication = async (publication) => {
   try {
     await borrowPublication(publication);
-    publications.value = await getPublicationsShopService();
+    publications.value = await getPublicationsShop();
   } catch (error) {
     console.error('Error fetching publications:', error);
   }

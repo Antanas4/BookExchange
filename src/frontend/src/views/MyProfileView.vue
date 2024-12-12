@@ -42,7 +42,7 @@
         <p v-if="formInputWarning.genre" class="warning-message">{{ formInputWarning.genre }}</p>
 
         <p v-if="warningMessage" class="warning-message">{{ warningMessage }}</p>
-        <Button label="Add Publication" severity="success" @click="addPublication" :disabled="!isFormValid"/>
+        <Button label="Add Publication" severity="success" @click="handleCreatePublication" :disabled="!isFormValid"/>
       </div>
 
 
@@ -112,23 +112,21 @@
             placeholder="Select Publication Type"
         />
         <DataTable :value="filteredPublications" tableStyle="min-width: 50rem">
-          <Column field="id" header="ID"/>
           <Column field="author" header="Author"/>
           <Column field="title" header="Title"/>
-          <Column field="price" header="Price"/>
           <Column field="publicationType" header="Publication Type"/>
           <Column field="status" header="Status"/>
+          <Column field="price" header="Price"/>
           <Column header="Actions">
             <template #body="slotProps">
               <Button icon="pi pi-pencil" outlined rounded @click="openEditDialog(slotProps.data)"/>
               <Button icon="pi pi-trash" outlined rounded severity="danger"
-                      @click="deletePublication(slotProps.data.id)"/>
+                      @click="handleDeletePublication(slotProps.data.id)"/>
             </template>
           </Column>
         </DataTable>
       </div>
 
-      <!-- Bought Publications Table -->
       <div class="card-publication-list">
         <h2 class="card-header">Bought Publications</h2>
         <DataTable :value="boughtPublications" tableStyle="min-width: 50rem">
@@ -173,11 +171,12 @@ import Column from "primevue/column";
 import Dialog from "primevue/dialog";
 import {computed, onMounted, ref} from "vue";
 import {
-  // getPublicationsService,
-  updatePublicationService,
-  deletePublicationService,
-  createPublicationService,
-  // returnPublication
+  updatePublication,
+  deletePublication,
+  createPublication,
+  getMyPublications,
+  getMyBorrowedPublications,
+  getMyBoughtPublications,
 } from "@/service/ManagePublicationsService";
 
 const ownerUsername = ref('');
@@ -193,11 +192,6 @@ const publicationToEdit = ref(null);
 const visibleDialog = ref(false);
 const showDialog = ref(false);
 const dialogMessage = ref('');
-
-// const filteredPublications = computed(() => {
-//   if (!selectedType.value) return myPublications.value;
-//   return myPublications.value.filter(pub => pub.publicationType === selectedType.value.label);
-// });
 
 const formInputWarning = ref({
   ownerUsername: '',
@@ -244,7 +238,6 @@ const filteredPublications = computed(() => {
   return myPublications.value.filter(pub => pub.publicationType === filteredTypeForTable.value.label);
 });
 
-import axios from 'axios';
 import {getCurrentUserRoles} from "@/service/AuthenticationService";
 import {useRoute} from "vue-router";
 import AdminMenuBar from "@/components/AdminMenuBar.vue";
@@ -355,7 +348,7 @@ const resetFormFields = () => {
   selectedType.value = null;
 };
 
-const addPublication = async () => {
+const handleCreatePublication = async () => {
   if (!validateFormInput()) return;
 
   publicationDto = {
@@ -370,22 +363,22 @@ const addPublication = async () => {
   };
 
   try {
-    await createPublicationService(publicationDto, clientUsername);
-    await fetchMyPublications();
+    await createPublication(publicationDto, clientUsername);
+    await handleGetMyPublications();
   } catch (error) {
     dialogMessage.value = 'Client ' + `${clientUsername}` + ' does not exist.';
     showDialog.value = true;
   } finally {
-    await fetchMyPublications()
+    await handleGetMyPublications()
     resetFormFields();
   }
 };
 
 
-const deletePublication = async (publicationId) => {
+const handleDeletePublication = async (publicationId) => {
   try {
-    await deletePublicationService(publicationId);
-    await fetchMyPublications();
+    await deletePublication(publicationId);
+    await handleGetMyPublications();
     await console.log("ID: ", publicationId, publicationId.value);
   } catch (error) {
     dialogMessage.value = 'Failed to delete publication.';
@@ -401,38 +394,37 @@ const openEditDialog = async (publicationToEditData) => {
 const savePublication = async () => {
   try {
     if (publicationToEdit.value) {
-      await updatePublicationService(publicationToEdit.value);
+      await updatePublication(publicationToEdit.value);
       visibleDialog.value = false;
     }
   } catch (error) {
     dialogMessage.value = 'Failed to update publication';
     showDialog.value = true;
   } finally {
-    await fetchMyPublications();
+    await handleGetMyPublications();
   }
 };
 
-const fetchMyPublications = async () => {
+const handleGetMyPublications = async () => {
   try {
-    const response = await axios.get('/api/publications/myPublications');
-    myPublications.value = response.data;
+      await getMyPublications(myPublications);
   } catch (error) {
     console.error('Error fetching my publications:', error);
   }
 };
 
-const fetchBoughtPublications = async () => {
+const handleGetMyBoughtPublications = async () => {
   try {
-    const response = await axios.get('/api/publications/myPublications/bought');
-    boughtPublications.value = response.data;
+    await getMyBoughtPublications(boughtPublications);
+
   } catch (error) {
     console.error('Error fetching bought publications:', error);
   }
 };
 
-const fetchBorrowedPublications = async () => {
+const handleGetMyBorrowedPublications = async () => {
   try {
-    const response = await axios.get('/api/publications/myPublications/borrowed');
+    const response = getMyBorrowedPublications();
     borrowedPublications.value = response.data;
   } catch (error) {
     console.error('Error fetching borrowed publications:', error);
@@ -448,9 +440,9 @@ onMounted(async () => {
       CurrentUserRole.value = 'ROLE_ADMIN';
     }
     if (clientUsername) {
-      await fetchMyPublications();
-      await fetchBoughtPublications();
-      await fetchBorrowedPublications();
+      await handleGetMyPublications();
+      await handleGetMyBoughtPublications();
+      await handleGetMyBorrowedPublications();
     }
   } catch (error) {
     console.error('Error fetching roles:', error);
@@ -466,11 +458,11 @@ onMounted(async () => {
 //     console.error('Error fetching publications:', error);
 //   } finally {
 //     await fetchMyPublications();
-//     await fetchBorrowedPublications();
+//     await handleGetMyBorrowedPublications();
 //   }
 // };
 
-fetchMyPublications();
+handleGetMyPublications();
 </script>
 
 <style>
@@ -536,9 +528,6 @@ fetchMyPublications();
   justify-content: center;
   gap: 0.5rem;
 }
-</style>
-
-<style scoped>
 .profile-container {
   display: flex;
   flex-direction: column;
@@ -557,3 +546,4 @@ fetchMyPublications();
   margin-bottom: 15px;
 }
 </style>
+

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const PUBLICATIONS_URL = '/api/publications';
 
-export const createPublicationService = async (publicationDto, ownerUsername) => {
+export const createPublication = async (publicationDto, ownerUsername) => {
     try {
         const userCheckResponse = await axios.get(`/api/${ownerUsername}`);
         if (userCheckResponse.data) {
@@ -14,7 +14,7 @@ export const createPublicationService = async (publicationDto, ownerUsername) =>
     }
 }
 
-export const getPublicationsService = async (publications) => {
+export const getPublications = async (publications) => {
     try {
         const response = await axios.get(PUBLICATIONS_URL);
         publications.value = response.data;
@@ -23,7 +23,7 @@ export const getPublicationsService = async (publications) => {
     }
 };
 
-export const updatePublicationService = async (publication) => {
+export const updatePublication = async (publication) => {
     try {
         await axios.put(`${PUBLICATIONS_URL}/${publication.id}`, publication);
     } catch (error) {
@@ -31,7 +31,7 @@ export const updatePublicationService = async (publication) => {
     }
 };
 
-export const deletePublicationService = async (publicationId) => {
+export const deletePublication = async (publicationId) => {
     try {
         await axios.delete(`${PUBLICATIONS_URL}/${publicationId}`);
     } catch (error) {
@@ -39,7 +39,7 @@ export const deletePublicationService = async (publicationId) => {
     }
 };
 
-export const getPublicationsShopService = async () => {
+export const getPublicationsShop = async () => {
     try {
         const response = await axios.get(`${PUBLICATIONS_URL}/shop`);
         console.log(response.data);
@@ -75,3 +75,28 @@ export const returnPublication = async (publicationId) => {
         throw new Error("Error returning publications: " + error.message);
     }
 };
+
+export const getMyPublications = async (myPublications) =>{
+    try{
+        const response = await axios.get(`${PUBLICATIONS_URL}/myPublications`);
+        myPublications.value = response.data;
+    } catch (error){
+        console.error(error.message);
+    }
+}
+export const getMyBoughtPublications = async (boughtPublications) =>{
+    try{
+        const response =  await axios.get(`${PUBLICATIONS_URL}/myPublications/bought`);
+        boughtPublications.value = response.data;
+    } catch (error){
+        console.error(error.message);
+    }
+}
+
+export const getMyBorrowedPublications = async () =>{
+    try{
+        return await axios.get(`${PUBLICATIONS_URL}/myPublications/borrowed`);
+    } catch (error){
+        console.error(error.message);
+    }
+}
