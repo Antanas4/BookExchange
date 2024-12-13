@@ -25,7 +25,7 @@ export const getPublications = async (publications) => {
 
 export const updatePublication = async (publication) => {
     try {
-        await axios.put(`${PUBLICATIONS_URL}/${publication.id}`, publication);
+        await axios.put(PUBLICATIONS_URL, publication);
     } catch (error) {
         throw new Error;
     }

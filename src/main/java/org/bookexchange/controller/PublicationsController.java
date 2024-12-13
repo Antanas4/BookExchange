@@ -54,7 +54,7 @@ public class PublicationsController {
         }
     }
 
-    @PutMapping("/{publicationId}")
+    @PutMapping()
     public ResponseEntity<String> updatePublication(@RequestBody PublicationDto publicationDto) {
         try {
             publicationService.updatePublication(publicationDto);
