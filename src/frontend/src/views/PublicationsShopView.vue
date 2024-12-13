@@ -1,6 +1,7 @@
 <template>
-  <ClientMenuBar v-if="CurrentUserRole === 'ROLE_CLIENT'"/>
-  <AdminMenuBar v-if="CurrentUserRole === 'ROLE_ADMIN'"/>
+  <ClientMenuBar v-if="CurrentUserRole === 'ROLE_CLIENT'" />
+  <AdminMenuBar v-if="CurrentUserRole === 'ROLE_ADMIN'" />
+
   <div class="card">
     <DataView :value="publications" paginator :rows="5">
       <template #list="slotProps">
@@ -8,7 +9,7 @@
           <div v-for="(item, index) in slotProps.items" :key="index" class="publication-item">
             <div :class="['publication-container', index !== 0 ? 'border-top' : '']">
               <router-link :to="'/client/' + item.ownerUsername">
-                <Tag :value="item.ownerUsername"/>
+                <Tag :value="item.ownerUsername" />
               </router-link>
               <div class="publication-details">
                 <div class="title-author">
@@ -37,7 +38,8 @@
                       class="buy-button"
                       @click="handleBuyPublication(item)"
                       :disabled="CurrentUserRole === 'ROLE_ADMIN' || item.status === 'SOLD' || item.status === 'RESERVED'"
-                  >Buy
+                  >
+                    Buy
                   </Button>
                   <Button
                       class="reserve-button"
@@ -45,6 +47,13 @@
                       :disabled="CurrentUserRole === 'ROLE_ADMIN' || item.status === 'SOLD' || item.status === 'RESERVED'"
                   >
                     Borrow
+                  </Button>
+                  <Button
+                      class="leave-comment-button"
+                      :disabled="CurrentUserRole === 'ROLE_ADMIN'"
+                      @click="openCommentDialog(item)"
+                  >
+                    Add comment
                   </Button>
                 </div>
               </div>
@@ -54,20 +63,46 @@
       </template>
     </DataView>
   </div>
+
+  <!-- Comment Dialog -->
+  <Dialog header="Comments" v-model:visible="showCommentDialog" @hide="closeCommentDialog">
+    <div class="comments-container">
+      <div class="comments-list" v-for="(comment, index) in publicationComments" :key="index">
+        <div class="comment">
+          <div class="comment-title">{{ comment.title }}</div>
+          <div class="comment-body">{{ comment.body }}</div>
+          <div class="comment-author">By: {{ comment.author }}</div>
+        </div>
+      </div>
+
+      <div class="add-comment-form">
+        <h3>Leave a Comment</h3>
+        <input v-model="newComment.title" type="text" placeholder="Title" />
+        <textarea v-model="newComment.body" placeholder="Body"></textarea>
+        <Button label="Submit" @click="addComment" />
+      </div>
+    </div>
+  </Dialog>
 </template>
 
+
 <script setup>
-import {ref, onMounted} from 'vue';
+import {onMounted, ref} from 'vue';
 import Button from 'primevue/button';
 import DataView from 'primevue/dataview';
 import Tag from "primevue/tag";
-import {getPublicationsShop, buyPublication, borrowPublication} from '@/service/ManagePublicationsService';
+import {borrowPublication, buyPublication, getPublicationsShop} from '@/service/ManagePublicationsService';
 import ClientMenuBar from "@/components/ClientMenuBar.vue";
 import AdminMenuBar from "@/components/AdminMenuBar.vue";
 import {getCurrentUserRoles} from "@/service/AuthenticationService";
+import {getPublicationComments} from "@/service/CommentService";
+import Dialog from "primevue/dialog";
 
 const publications = ref([]);
 const CurrentUserRole = ref('');
+const showCommentDialog = ref(false);
+const publicationComments = ref([]);
+const newComment = ref({ title: '', body: '' });
 
 onMounted(async () => {
   try {
@@ -102,6 +137,35 @@ const handleBorrowPublication = async (publication) => {
     console.error('Error borrowing publications:', error);
   }
 }
+
+const openCommentDialog = async (publication) => {
+  try{
+    publicationComments.value = await getPublicationComments(publication);
+    showCommentDialog.value = true;
+  }catch (error){
+    console.error('Error fetching publications', error);
+  }
+};
+
+const closeCommentDialog = () => {
+  showCommentDialog.value = false;
+};
+
+const addComment = async () => {
+  // if (newComment.value.title && newComment.value.body) {
+  //   try {
+  //     await addCommentToPublication({
+  //       title: newComment.value.title,
+  //       body: newComment.value.body,
+  //       publicationId: currentPublicationId.value,
+  //     });
+  //     currentPublicationComments.value.push(newComment.value);
+  //     newComment.value = { title: '', body: '' }; // Reset the form
+  //   } catch (error) {
+  //     console.error('Error adding comment:', error);
+  //   }
+  // }
+};
 </script>
 
 <style scoped>
@@ -181,5 +245,43 @@ const handleBorrowPublication = async (publication) => {
   font-size: 1.2em;
   font-weight: bold;
   margin-bottom: 10px;
+}
+.comments-container {
+  max-width: 500px;
+  margin: auto;
+}
+
+.comments-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.comment {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.comment-title {
+  font-weight: bold;
+}
+
+.add-comment-form {
+  margin-top: 20px;
+}
+
+.add-comment-form input,
+.add-comment-form textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+}
+
+.add-comment-form textarea {
+  height: 100px;
+}
+
+.add-comment-form button {
+  width: 100%;
 }
 </style>
