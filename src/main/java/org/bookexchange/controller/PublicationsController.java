@@ -44,6 +44,16 @@ public class PublicationsController {
         }
     }
 
+    @GetMapping("/{publicationId}")
+    public ResponseEntity<PublicationDto> getPublication(@PathVariable Integer publicationId) {
+        try {
+            PublicationDto publicationDto = publicationService.getPublication(publicationId);
+            return ResponseEntity.ok(publicationDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @DeleteMapping("/{publicationId}")
     public ResponseEntity<String> deletePublication (@PathVariable Integer publicationId){
         try {

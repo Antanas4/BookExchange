@@ -15,7 +15,9 @@
                 <div class="title-author">
                   <div class="label-value-pair">
                     <div class="label">Title:</div>
-                    <span class="value">{{ item.title }}</span>
+                    <router-link :to="'/publications/about/' + item.id" class="value link">
+                      {{ item.title }}
+                    </router-link>
                   </div>
                   <div class="label-value-pair">
                     <div class="label">Author:</div>
@@ -48,41 +50,15 @@
                   >
                     Borrow
                   </Button>
-                  <Button
-                      class="leave-comment-button"
-                      :disabled="CurrentUserRole === 'ROLE_ADMIN'"
-                      @click="openCommentDialog(item)"
-                  >
-                    Add comment
-                  </Button>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </template>
     </DataView>
   </div>
-
-  <!-- Comment Dialog -->
-  <Dialog header="Comments" v-model:visible="showCommentDialog" @hide="closeCommentDialog">
-    <div class="comments-container">
-      <div class="comments-list" v-for="(comment, index) in publicationComments" :key="index">
-        <div class="comment">
-          <div class="comment-title">{{ comment.title }}</div>
-          <div class="comment-body">{{ comment.body }}</div>
-          <div class="comment-author">By: {{ comment.author }}</div>
-        </div>
-      </div>
-
-      <div class="add-comment-form">
-        <h3>Leave a Comment</h3>
-        <input v-model="newComment.title" type="text" placeholder="Title" />
-        <textarea v-model="newComment.body" placeholder="Body"></textarea>
-        <Button label="Submit" @click="addComment" />
-      </div>
-    </div>
-  </Dialog>
 </template>
 
 
@@ -95,14 +71,9 @@ import {borrowPublication, buyPublication, getPublicationsShop} from '@/service/
 import ClientMenuBar from "@/components/ClientMenuBar.vue";
 import AdminMenuBar from "@/components/AdminMenuBar.vue";
 import {getCurrentUserRoles} from "@/service/AuthenticationService";
-import {getPublicationComments} from "@/service/CommentService";
-import Dialog from "primevue/dialog";
 
 const publications = ref([]);
 const CurrentUserRole = ref('');
-const showCommentDialog = ref(false);
-const publicationComments = ref([]);
-const newComment = ref({ title: '', body: '' });
 
 onMounted(async () => {
   try {
@@ -137,35 +108,6 @@ const handleBorrowPublication = async (publication) => {
     console.error('Error borrowing publications:', error);
   }
 }
-
-const openCommentDialog = async (publication) => {
-  try{
-    publicationComments.value = await getPublicationComments(publication);
-    showCommentDialog.value = true;
-  }catch (error){
-    console.error('Error fetching publications', error);
-  }
-};
-
-const closeCommentDialog = () => {
-  showCommentDialog.value = false;
-};
-
-const addComment = async () => {
-  // if (newComment.value.title && newComment.value.body) {
-  //   try {
-  //     await addCommentToPublication({
-  //       title: newComment.value.title,
-  //       body: newComment.value.body,
-  //       publicationId: currentPublicationId.value,
-  //     });
-  //     currentPublicationComments.value.push(newComment.value);
-  //     newComment.value = { title: '', body: '' }; // Reset the form
-  //   } catch (error) {
-  //     console.error('Error adding comment:', error);
-  //   }
-  // }
-};
 </script>
 
 <style scoped>
@@ -189,14 +131,6 @@ const addComment = async () => {
   align-items: center;
 }
 
-.border-top {
-  border-top: 1px solid #ddd;
-}
-
-.owner-tag {
-  flex: 0 0 auto;
-}
-
 .publication-details {
   flex: 1 1 auto;
   padding-left: 15px;
@@ -211,7 +145,7 @@ const addComment = async () => {
 .label-value-pair {
   display: flex;
   align-items: center;
-  margin-bottom: 5px; /* space between pairs */
+  margin-bottom: 5px;
 }
 
 .label {
@@ -245,29 +179,6 @@ const addComment = async () => {
   font-size: 1.2em;
   font-weight: bold;
   margin-bottom: 10px;
-}
-.comments-container {
-  max-width: 500px;
-  margin: auto;
-}
-
-.comments-list {
-  max-height: 200px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-}
-
-.comment {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
-}
-
-.comment-title {
-  font-weight: bold;
-}
-
-.add-comment-form {
-  margin-top: 20px;
 }
 
 .add-comment-form input,

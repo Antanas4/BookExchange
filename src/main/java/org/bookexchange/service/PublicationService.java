@@ -254,4 +254,22 @@ public class PublicationService {
             recipientClient.getOwnedPublications().remove(publicationReturned);
         }
     }
+
+    public PublicationDto getPublication(Integer publicationId) {
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new NoSuchElementException("Publication not found with id: " + publicationId));
+
+        return mapToDto(publication);
+    }
+
+    private PublicationDto mapToDto(Publication publication) {
+        PublicationDto dto = new PublicationDto();
+        dto.setId(publication.getId());
+        dto.setTitle(publication.getTitle());
+        dto.setAuthor(publication.getAuthor());
+        dto.setPrice(publication.getPrice());
+        dto.setPublicationType(getPublicationType(publication));
+
+        return dto;
+    }
 }
