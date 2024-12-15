@@ -1,5 +1,5 @@
 <template>
-  <ClientMenuBar/>
+  <AdminMenuBar/>
   <h1 class="page-header">Manage Publications</h1>
   <div class="container">
     <div class="form">
@@ -137,7 +137,7 @@ import {
   deletePublication,
   createPublication
 } from "@/service/ManagePublicationsService";
-import ClientMenuBar from "@/components/ClientMenuBar.vue";
+import AdminMenuBar from "@/components/AdminMenuBar.vue";
 
 const ownerUsername = ref('');
 const title = ref('');

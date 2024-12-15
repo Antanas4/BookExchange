@@ -45,7 +45,7 @@ const routes = [
     {
         path: '/publications',
         component: ManagePublicationsView,
-        meta: { requiresRole: 'ROLE_CLIENT' }
+        meta: { requiresRole: 'ROLE_ADMIN' }
     },
     { path: '/client/:ownerUsername', component: ClientDetailsView, props: true },
     { path: '/publications/about/:id', component: PublicationDetailsView, props: true },

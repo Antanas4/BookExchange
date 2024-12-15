@@ -25,6 +25,12 @@ const navLinks = ref([
     command: () => {
       router.push('/users');
     }
+  },
+  {
+    label: 'Manage Publications',
+    command: () => {
+      router.push('/publications');
+    }
   }
 ]);
 
