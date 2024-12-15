@@ -19,7 +19,10 @@
           style="height: 400px; overflow-y: auto;">
         <template v-slot:item="{ item }">
           <div :class="['comment-item', { 'comment-reply': item.parentCommentId }]">
-            <h3>{{ item.title }}</h3>
+            <h3>
+              {{ item.title }}
+              <span v-if="item.parentCommentId"> (Replying to: {{ getParentCommentTitle(item.parentCommentId) }})</span>
+            </h3>
             <p>{{ item.body }}</p>
             <Button
                 class="replyButton"
@@ -119,6 +122,11 @@ const fetchPublicationDetails = async (publicationId) => {
   } catch (error) {
     console.error("Error fetching publication details", error);
   }
+};
+
+const getParentCommentTitle = (parentCommentId) => {
+  const parentComment = comments.value.find(comment => comment.id === parentCommentId);
+  return parentComment ? parentComment.title : '';
 };
 
 const prepareComment = (commentId, commentTitle = null) => {
