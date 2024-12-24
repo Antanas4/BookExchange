@@ -24,115 +24,68 @@ public class PublicationsController {
     private final PublicationService publicationService;
 
     @PostMapping
-    public ResponseEntity<String> createPublication (@RequestBody PublicationDto publicationDto){
-        try{
-            publicationService.createPublication(publicationDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(publicationDto.toString());
-        } catch (Exception e){
-            logger.error("Error creating publication", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public ResponseEntity<String> createPublication(@RequestBody PublicationDto publicationDto) {
+        publicationService.createPublication(publicationDto);
+        return new ResponseEntity<>("Publication created", HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<PublicationDto>> getPublications(){
-        try{
-            List<PublicationDto> publicationDtos = publicationService.getPublications();
-            return ResponseEntity.ok(publicationDtos);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public ResponseEntity<List<PublicationDto>> getPublications() {
+        return ResponseEntity.ok(publicationService.getPublications());
     }
 
     @GetMapping("/{publicationId}")
     public ResponseEntity<PublicationDto> getPublication(@PathVariable Integer publicationId) {
-        try {
-            PublicationDto publicationDto = publicationService.getPublication(publicationId);
-            return ResponseEntity.ok(publicationDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        return ResponseEntity.ok(publicationService.getPublication(publicationId));
     }
 
     @DeleteMapping("/{publicationId}")
-    public ResponseEntity<String> deletePublication (@PathVariable Integer publicationId){
-        try {
-            publicationService.deletePublication(publicationId);
-            return ResponseEntity.ok("Publication deleted successfully.");
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publication not found.");
-        }
+    public ResponseEntity<String> deletePublication(@PathVariable Integer publicationId) {
+        publicationService.deletePublication(publicationId);
+        return ResponseEntity.ok("Publication deleted successfully.");
+
     }
 
     @PutMapping()
     public ResponseEntity<String> updatePublication(@RequestBody PublicationDto publicationDto) {
-        try {
-            publicationService.updatePublication(publicationDto);
-            return ResponseEntity.ok("Publication updated successfully.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
-        }
-    } //nereikia cia ID greiciausiai, perziureti!!
+        publicationService.updatePublication(publicationDto);
+        return ResponseEntity.ok("Publication updated successfully.");
+
+    }
 
     @GetMapping("/shop")
-    public ResponseEntity<List<PublicationDto>> getPublicationsShop(){
-        try{
-            List<PublicationDto> publicationDtos = publicationService.getPublicationShop();
-            return ResponseEntity.ok(publicationDtos);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public ResponseEntity<List<PublicationDto>> getPublicationsShop() {
+        List<PublicationDto> publicationDtos = publicationService.getPublicationShop();
+        return ResponseEntity.ok(publicationDtos);
     }
 
     @PutMapping("/shop/borrow/{publicationId}")
     public ResponseEntity<String> borrowPublication(@PathVariable Integer publicationId) {
-        try{
-            publicationService.borrowPublication(publicationId);
-            return ResponseEntity.ok("Publication reserved successfully.");
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        publicationService.borrowPublication(publicationId);
+        return ResponseEntity.ok("Publication reserved successfully.");
     }
 
-    @PutMapping ("/shop/buy/{publicationId}")
+    @PutMapping("/shop/buy/{publicationId}")
     public ResponseEntity<String> buyPublication(@PathVariable Integer publicationId) {
-        try{
-            publicationService.buyPublication(publicationId);
-            return ResponseEntity.ok("Publication bought successfully.");
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        publicationService.buyPublication(publicationId);
+        return ResponseEntity.ok("Publication bought successfully.");
     }
 
-    @PutMapping ("/shop/return/{publicationId}")
+    @PutMapping("/shop/return/{publicationId}")
     public ResponseEntity<String> returnPublication(@PathVariable Integer publicationId) {
-        try{
-            publicationService.returnPublication(publicationId);
-            return ResponseEntity.ok("Publication borrowed successfully.");
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        publicationService.returnPublication(publicationId);
+        return ResponseEntity.ok("Publication borrowed successfully.");
     }
 
     @GetMapping("/myPublications")
-    public ResponseEntity<?> getMyPublications(){
-        try{
-            List<PublicationDto> publications = publicationService.getMyPublications();
-            return ResponseEntity.ok(publications);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public ResponseEntity<?> getMyPublications() {
+        List<PublicationDto> publications = publicationService.getMyPublications();
+        return ResponseEntity.ok(publications);
     }
 
     @GetMapping("/myPublications/borrowed")
-    public ResponseEntity<?> getMyBorrowedPublications(){
-        try{
-            List<PublicationDto> publications = publicationService.getMyBorrowedPublications();
-            return ResponseEntity.ok(publications);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public ResponseEntity<?> getMyBorrowedPublications() {
+        List<PublicationDto> publications = publicationService.getMyBorrowedPublications();
+        return ResponseEntity.ok(publications);
     }
 }
