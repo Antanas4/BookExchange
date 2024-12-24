@@ -246,7 +246,6 @@ const handleCreateUser = async () => {
 const handleGetUsers = async () => {
   try {
     const data = await getUsers();
-    console.log(data);
     users.value = data;
   } catch (error) {
     dialogMessage.value = error.message;

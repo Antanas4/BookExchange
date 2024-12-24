@@ -166,10 +166,9 @@ public class PublicationService {
         Client client = clientRepository.findByUsername(username);
 
         return client.getOwnedPublications().stream()
-                // Filter out publications that are RESERVED and not owned by the client
                 .filter(publication ->
                         !(publication.getStatus() == PublicationStatus.RESERVED
-                                && publication.getOwner().getId() != client.getId())) // Use '!=' for int comparison
+                                && publication.getOwner().getId() != client.getId()))
                 .map(publication -> {
                     PublicationDto dto = new PublicationDto();
                     dto.setId(publication.getId());

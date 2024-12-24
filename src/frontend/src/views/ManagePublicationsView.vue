@@ -2,52 +2,52 @@
   <AdminMenuBar/>
   <h1 class="page-header">Manage Publications</h1>
   <div class="container">
-    <div class="form">
+<!--    <div class="form">-->
 
-      <FloatLabel>
+<!--      <FloatLabel>-->
 
-      </FloatLabel>
+<!--      </FloatLabel>-->
 
-      <label for="username" class="dialog-label">Username</label>
-      <InputText v-model="ownerUsername" placeholder="Enter Publications Owner Username"
-                 @input="validateField('ownerUsername', 'form')"/>
-      <p v-if="formInputWarning.ownerUsername" class="warning-message">{{ formInputWarning.ownerUsername }}</p>
+<!--      <label for="username" class="dialog-label">Username</label>-->
+<!--      <InputText v-model="ownerUsername" placeholder="Enter Publications Owner Username"-->
+<!--                 @input="validateField('ownerUsername', 'form')"/>-->
+<!--      <p v-if="formInputWarning.ownerUsername" class="warning-message">{{ formInputWarning.ownerUsername }}</p>-->
 
-      <label for="title" class="dialog-label">Title</label>
-      <InputText v-model="title" placeholder="Enter Title" @input="validateField('title', 'form')"/>
-      <p v-if="formInputWarning.title" class="warning-message">{{ formInputWarning.title }}</p>
+<!--      <label for="title" class="dialog-label">Title</label>-->
+<!--      <InputText v-model="title" placeholder="Enter Title" @input="validateField('title', 'form')"/>-->
+<!--      <p v-if="formInputWarning.title" class="warning-message">{{ formInputWarning.title }}</p>-->
 
-      <label for="author" class="dialog-label">Author</label>
-      <InputText v-model="author" placeholder="Enter Author Name" @input="validateField('author', 'form')"/>
-      <p v-if="formInputWarning.author" class="warning-message">{{ formInputWarning.author }}</p>
+<!--      <label for="author" class="dialog-label">Author</label>-->
+<!--      <InputText v-model="author" placeholder="Enter Author Name" @input="validateField('author', 'form')"/>-->
+<!--      <p v-if="formInputWarning.author" class="warning-message">{{ formInputWarning.author }}</p>-->
 
-      <label for="price" class="dialog-label">Price</label>
-      <InputText v-model="price" placeholder="Enter Price" @input="validateField('price', 'form')"/>
-      <p v-if="formInputWarning.price" class="warning-message">{{ formInputWarning.price }}</p>
+<!--      <label for="price" class="dialog-label">Price</label>-->
+<!--      <InputText v-model="price" placeholder="Enter Price" @input="validateField('price', 'form')"/>-->
+<!--      <p v-if="formInputWarning.price" class="warning-message">{{ formInputWarning.price }}</p>-->
 
-      <label for="Publication type" class="dialog-label">Publication Type</label>
-      <AutoComplete v-model="selectedType" :suggestions="filteredTypes" @complete="searchTypes"
-                    :virtualScrollerOptions="{ itemSize: 38 }" optionLabel="label" dropdown forceSelection
-                    placeholder="Select Publication Type"/>
+<!--      <label for="Publication type" class="dialog-label">Publication Type</label>-->
+<!--      <AutoComplete v-model="selectedType" :suggestions="filteredTypes" @complete="searchTypes"-->
+<!--                    :virtualScrollerOptions="{ itemSize: 38 }" optionLabel="label" dropdown forceSelection-->
+<!--                    placeholder="Select Publication Type"/>-->
 
-      <label v-if="selectedType?.label === 'Magazine'" for="issueNumber" class="dialog-label">Issue Number</label>
-      <InputText v-if="selectedType?.label === 'Magazine'" v-model="issueNumber"
-                 placeholder="Enter Magazine's Issue Number" @input="validateField('issueNumber', 'form')"/>
-      <p v-if="formInputWarning.issueNumber" class="warning-message">{{ formInputWarning.issueNumber }}</p>
+<!--      <label v-if="selectedType?.label === 'Magazine'" for="issueNumber" class="dialog-label">Issue Number</label>-->
+<!--      <InputText v-if="selectedType?.label === 'Magazine'" v-model="issueNumber"-->
+<!--                 placeholder="Enter Magazine's Issue Number" @input="validateField('issueNumber', 'form')"/>-->
+<!--      <p v-if="formInputWarning.issueNumber" class="warning-message">{{ formInputWarning.issueNumber }}</p>-->
 
-      <label v-if="selectedType?.label === 'Comic Book'" for="illustrator" class="dialog-label">Illustrator</label>
-      <InputText v-if="selectedType?.label === 'Comic Book'" v-model="illustrator"
-                 placeholder="Enter Comic Book's illustrator" @input="validateField('illustrator', 'form')"/>
-      <p v-if="formInputWarning.illustrator" class="warning-message">{{ formInputWarning.illustrator }}</p>
+<!--      <label v-if="selectedType?.label === 'Comic Book'" for="illustrator" class="dialog-label">Illustrator</label>-->
+<!--      <InputText v-if="selectedType?.label === 'Comic Book'" v-model="illustrator"-->
+<!--                 placeholder="Enter Comic Book's illustrator" @input="validateField('illustrator', 'form')"/>-->
+<!--      <p v-if="formInputWarning.illustrator" class="warning-message">{{ formInputWarning.illustrator }}</p>-->
 
-      <label v-if="selectedType?.label === 'Book'" for="genre" class="dialog-label">Genre</label>
-      <InputText v-if="selectedType?.label === 'Book'" v-model="genre" placeholder="Enter Book's Genre"
-                 @input="validateField('genre', 'form')"/>
-      <p v-if="formInputWarning.genre" class="warning-message">{{ formInputWarning.genre }}</p>
+<!--      <label v-if="selectedType?.label === 'Book'" for="genre" class="dialog-label">Genre</label>-->
+<!--      <InputText v-if="selectedType?.label === 'Book'" v-model="genre" placeholder="Enter Book's Genre"-->
+<!--                 @input="validateField('genre', 'form')"/>-->
+<!--      <p v-if="formInputWarning.genre" class="warning-message">{{ formInputWarning.genre }}</p>-->
 
-      <p v-if="warningMessage" class="warning-message">{{ warningMessage }}</p>
-      <Button label="Add Publication" severity="success" @click="addPublication" :disabled="!isFormValid"/>
-    </div>
+<!--      <p v-if="warningMessage" class="warning-message">{{ warningMessage }}</p>-->
+<!--      <Button label="Add Publication" severity="success" @click="addPublication" :disabled="!isFormValid"/>-->
+<!--    </div>-->
 
     <div class="card-publication-list">
       <h2 class="card-header">Publications List</h2>
@@ -126,7 +126,7 @@
 
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import AutoComplete from "primevue/autocomplete";
+// import AutoComplete from "primevue/autocomplete";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Dialog from "primevue/dialog";
@@ -135,19 +135,19 @@ import {
   getPublications,
   updatePublication,
   deletePublication,
-  createPublication
+  // createPublication
 } from "@/service/ManagePublicationsService";
 import AdminMenuBar from "@/components/AdminMenuBar.vue";
 
 const ownerUsername = ref('');
-const title = ref('');
+// const title = ref('');
 const author = ref('');
 const price = ref('');
 const genre = ref('');
 const issueNumber = ref('');
 const illustrator = ref('');
 const selectedType = ref(null);
-const warningMessage = ref('');
+// const warningMessage = ref('');
 const publications = ref([]);
 const publicationToEdit = ref(null);
 const visibleDialog = ref(false);
@@ -173,31 +173,31 @@ const dialogInputWarning = ref({
 });
 
 
-const publicationTypes = [
-  {label: 'Book'},
-  {label: 'Magazine'},
-  {label: 'Comic Book'}
-];
+// const publicationTypes = [
+//   {label: 'Book'},
+//   {label: 'Magazine'},
+//   {label: 'Comic Book'}
+// ];
 
-let publicationDto = ref({
-  id: '',
-  ownerUsername: '',
-  title: '',
-  author: '',
-  price: '',
-  genre: '',
-  issueNumber: '',
-  illustrator: '',
-  publicationType: ''
-});
+// let publicationDto = ref({
+//   id: '',
+//   ownerUsername: '',
+//   title: '',
+//   author: '',
+//   price: '',
+//   genre: '',
+//   issueNumber: '',
+//   illustrator: '',
+//   publicationType: ''
+// });
 
 
-const filteredTypes = ref([]);
+// const filteredTypes = ref([]);
 
-const searchTypes = (event) => {
-  filteredTypes.value = publicationTypes.filter(type =>
-      type.label.toLowerCase().includes(event.query.toLowerCase()));
-}
+// const searchTypes = (event) => {
+//   filteredTypes.value = publicationTypes.filter(type =>
+//       type.label.toLowerCase().includes(event.query.toLowerCase()));
+// }
 
 const validators = {
   usernameValidator: (value) => /^[A-Za-z0-9!@#$%^&*()_+=-]*$/.test(value) ? '' : 'Username can contain letters, numbers, and special characters!',
@@ -248,25 +248,25 @@ const validateField = (field, context) => {
 };
 
 
-const validateFormInput = () => {
-  Object.values(formInputWarning.value).forEach(message => {
-    if (message) {
-      warningMessage.value = 'Please fix the highlighted errors before submitting.';
-      return false;
-    }
-  });
-  warningMessage.value = '';
-  return true;
-};
+// const validateFormInput = () => {
+//   Object.values(formInputWarning.value).forEach(message => {
+//     if (message) {
+//       warningMessage.value = 'Please fix the highlighted errors before submitting.';
+//       return false;
+//     }
+//   });
+//   warningMessage.value = '';
+//   return true;
+// };
 
-const isFormValid = computed(() => {
-  const noWarnings = Object.values(formInputWarning.value).every(message => !message);
-  const allFieldsFilled = ownerUsername.value && title.value && author.value && price.value && selectedType.value &&
-      (selectedType.value.label !== 'Book' || genre.value) &&
-      (selectedType.value.label !== 'Magazine' || issueNumber.value) &&
-      (selectedType.value.label !== 'Comic Book' || illustrator.value);
-  return noWarnings && allFieldsFilled;
-});
+// const isFormValid = computed(() => {
+//   const noWarnings = Object.values(formInputWarning.value).every(message => !message);
+//   const allFieldsFilled = ownerUsername.value && title.value && author.value && price.value && selectedType.value &&
+//       (selectedType.value.label !== 'Book' || genre.value) &&
+//       (selectedType.value.label !== 'Magazine' || issueNumber.value) &&
+//       (selectedType.value.label !== 'Comic Book' || illustrator.value);
+//   return noWarnings && allFieldsFilled;
+// });
 
 const isDialogValid = computed(() => {
   const noWarnings = Object.values(dialogInputWarning.value).every(message => !message);
@@ -281,41 +281,41 @@ const isDialogValid = computed(() => {
   return noWarnings && allFieldsFilled;
 });
 
-const resetFormFields = () => {
-  ownerUsername.value = '';
-  title.value = '';
-  author.value = '';
-  price.value = '';
-  genre.value = '';
-  issueNumber.value = '';
-  illustrator.value = '';
-  selectedType.value = null;
-};
+// const resetFormFields = () => {
+//   ownerUsername.value = '';
+//   title.value = '';
+//   author.value = '';
+//   price.value = '';
+//   genre.value = '';
+//   issueNumber.value = '';
+//   illustrator.value = '';
+//   selectedType.value = null;
+// };
 
-const addPublication = async () => {
-  if (!validateFormInput()) return;
-
-  publicationDto = {
-    ownerUsername: ownerUsername.value,
-    title: title.value,
-    author: author.value,
-    price: price.value,
-    genre: selectedType.value?.label === 'Book' ? genre.value : undefined,
-    issueNumber: selectedType.value?.label === 'Magazine' ? issueNumber.value : undefined,
-    illustrator: selectedType.value?.label === 'Comic Book' ? illustrator.value : undefined,
-    publicationType: selectedType.value?.label
-  };
-
-  try {
-    await createPublication(publicationDto, ownerUsername.value);
-    await loadPublications();
-  } catch (error) {
-    dialogMessage.value = 'Client ' + `${ownerUsername.value}` + ' does not exist.';
-    showDialog.value = true;
-  } finally {
-    resetFormFields();
-  }
-};
+// const addPublication = async () => {
+//   if (!validateFormInput()) return;
+//
+//   publicationDto = {
+//     ownerUsername: ownerUsername.value,
+//     title: title.value,
+//     author: author.value,
+//     price: price.value,
+//     genre: selectedType.value?.label === 'Book' ? genre.value : undefined,
+//     issueNumber: selectedType.value?.label === 'Magazine' ? issueNumber.value : undefined,
+//     illustrator: selectedType.value?.label === 'Comic Book' ? illustrator.value : undefined,
+//     publicationType: selectedType.value?.label
+//   };
+//
+//   try {
+//     await createPublication(publicationDto, ownerUsername.value);
+//     await loadPublications();
+//   } catch (error) {
+//     dialogMessage.value = 'Client ' + `${ownerUsername.value}` + ' does not exist.';
+//     showDialog.value = true;
+//   } finally {
+//     resetFormFields();
+//   }
+// };
 
 
 const handleDeletePublication = async (publicationId) => {
