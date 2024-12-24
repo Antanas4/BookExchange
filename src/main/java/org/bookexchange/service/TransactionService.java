@@ -23,22 +23,18 @@ public class TransactionService {
     private final PublicationRepository publicationRepository;
 
     public void createTransaction(TransactionDto transactionDto) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        Optional<Publication> optionalPublication = publicationRepository.findById(transactionDto.getPublicationId());
+        Publication publication = publicationRepository.findById(transactionDto.getPublicationId())
+                .orElseThrow(() -> new NoSuchElementException("Publication not found with id: " + transactionDto.getPublicationId()));
 
-        if (optionalPublication.isPresent()) {
-            Publication publication = optionalPublication.get();
-            Transaction transaction = new Transaction(
-                    transactionDto.getOwnerId(),
-                    transactionDto.getRecipientId(),
-                    publication,
-                    transactionDto.getTransactionType(),
-                    currentDateTime
-            );
-            transactionRepository.save(transaction);
-        } else{
-            throw new NoSuchElementException("Publication not found");
-        }
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        
+        Transaction transaction = new Transaction(
+                transactionDto.getOwnerId(),
+                transactionDto.getRecipientId(),
+                publication,
+                transactionDto.getTransactionType(),
+                currentDateTime);
+        transactionRepository.save(transaction);
     }
 
     public void deleteTransaction(Integer transactionId) {
@@ -52,7 +48,7 @@ public class TransactionService {
     }
 
     public List<TransactionDto> getTransactions() {
-        List<TransactionDto> transactionDtos= new ArrayList<>();
+        List<TransactionDto> transactionDtos = new ArrayList<>();
         List<Transaction> transactions = transactionRepository.findAll();
         for (Transaction transaction : transactions) {
             TransactionDto transactionDto = new TransactionDto();

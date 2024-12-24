@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bookexchange.dto.PublicationDto;
 import org.bookexchange.service.PublicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +18,6 @@ import java.util.List;
 @RequestMapping("/api/publications")
 
 public class PublicationsController {
-    private static final Logger logger = LoggerFactory.getLogger(PublicationsController.class);
     private final PublicationService publicationService;
 
     @PostMapping
@@ -43,7 +40,6 @@ public class PublicationsController {
     public ResponseEntity<String> deletePublication(@PathVariable Integer publicationId) {
         publicationService.deletePublication(publicationId);
         return ResponseEntity.ok("Publication deleted successfully.");
-
     }
 
     @PutMapping()

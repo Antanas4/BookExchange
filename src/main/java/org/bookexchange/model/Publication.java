@@ -26,6 +26,10 @@ public class Publication {
     @JoinColumn(name = "client_id", nullable = false)
     private Client owner;
 
+    @ManyToOne
+    @JoinColumn(name = "borrower_id")
+    private Client borrower;
+
     @Enumerated(EnumType.STRING)
     private PublicationStatus status;
 
