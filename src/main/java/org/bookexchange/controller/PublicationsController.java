@@ -74,13 +74,13 @@ public class PublicationsController {
     }
 
     @GetMapping("/myPublications")
-    public ResponseEntity<?> getMyPublications() {
+    public ResponseEntity<List<PublicationDto>> getMyPublications() {
         List<PublicationDto> publications = publicationService.getMyPublications();
         return ResponseEntity.ok(publications);
     }
 
     @GetMapping("/myPublications/borrowed")
-    public ResponseEntity<?> getMyBorrowedPublications() {
+    public ResponseEntity<List<PublicationDto>> getMyBorrowedPublications() {
         List<PublicationDto> publications = publicationService.getMyBorrowedPublications();
         return ResponseEntity.ok(publications);
     }

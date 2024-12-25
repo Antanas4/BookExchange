@@ -8,8 +8,8 @@ import org.bookexchange.model.enums.PublicationStatus;
 import org.bookexchange.model.enums.TransactionType;
 import org.bookexchange.repository.ClientRepository;
 import org.bookexchange.repository.PublicationRepository;
-import org.bookexchange.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,8 +22,8 @@ public class PublicationService {
     private final PublicationRepository publicationRepository;
     private final UserService userService;
     private final TransactionService transactionService;
-    private final TransactionRepository transactionRepository;
 
+    @Transactional
     public void createPublication(PublicationDto publicationDto) {
         Publication publication = mapToEntity(publicationDto);
         publication.setOwner(clientRepository.findByUsername(publicationDto.getOwnerUsername()));
@@ -37,10 +37,14 @@ public class PublicationService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deletePublication(Integer publicationId) {
-        publicationRepository.deleteById(publicationId);
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Publication not found: " + publicationId));
+        publicationRepository.delete(publication);
     }
 
+    @Transactional
     public void updatePublication(PublicationDto publicationDto) {
         Publication publication = publicationRepository.findById(publicationDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Publication not found: " + publicationDto.getId()));

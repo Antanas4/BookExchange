@@ -14,5 +14,4 @@ import lombok.Setter;
 
 public class ComicBook extends Publication{
     private String illustrator;
-
 }

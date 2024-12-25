@@ -1,5 +1,6 @@
 package org.bookexchange.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.bookexchange.dto.UserDto;
 import org.bookexchange.model.Admin;
@@ -26,12 +27,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public void createUser(UserDto userDto) {
         userRepository.findByUsername(userDto.getUsername())
                 .ifPresent(user -> {
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists.");
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Username" + user.getUsername() + "already exists.");
                 });
-
         User user = mapToUser(userDto);
         userRepository.save(user);
     }
@@ -48,6 +49,7 @@ public class UserService {
                 .orElseThrow(() -> new NoSuchElementException("User not found with username: " + username));
     }
 
+    @Transactional
     public void updateUser(String username, UserDto userDto) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
@@ -55,6 +57,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void deleteUser(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));

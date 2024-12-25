@@ -15,6 +15,3 @@ import lombok.Setter;
 public class Book extends Publication{
     private String genre;
 }
-
-//rekordai
-//enumai

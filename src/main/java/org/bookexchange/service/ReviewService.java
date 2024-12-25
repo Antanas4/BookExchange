@@ -1,5 +1,6 @@
 package org.bookexchange.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.bookexchange.dto.ReviewDto;
 import org.bookexchange.model.Client;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +20,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserService userService;
 
+    @Transactional
     public void addReview(ReviewDto reviewDto) {
         Client recipient = clientRepository.findByUsername(reviewDto.getRecipient());
         Client author = clientRepository.findByUsername(userService.getCurrentUsername());

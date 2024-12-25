@@ -11,10 +11,10 @@ import org.bookexchange.model.enums.UserRole;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 @Entity
 @Table(name = "app_user")
 @Inheritance(strategy = InheritanceType.JOINED)
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

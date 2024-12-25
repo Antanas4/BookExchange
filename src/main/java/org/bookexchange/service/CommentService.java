@@ -9,6 +9,7 @@ import org.bookexchange.repository.ClientRepository;
 import org.bookexchange.repository.CommentRepository;
 import org.bookexchange.repository.PublicationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,12 +23,14 @@ public class CommentService {
     private final ClientRepository clientRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public void addComment(CommentDto commentDto) {
+        Publication publication = publicationRepository.findById(commentDto.getPublicationId())
+                .orElseThrow(() -> new IllegalArgumentException("Publication not found"));
+
         LocalDateTime now = LocalDateTime.now();
         String authorUsername = userService.getCurrentUsername();
         Client author = clientRepository.findByUsername(authorUsername);
-        Publication publication = publicationRepository.findById(commentDto.getPublicationId())
-                .orElseThrow(() -> new IllegalArgumentException("Publication not found"));
 
         Comment comment = new Comment();
         comment.setTitle(commentDto.getTitle());
@@ -68,6 +71,5 @@ public class CommentService {
                 comment.getAuthor().getUsername(),
                 comment.getPublication().getId()
         );
-
     }
 }
