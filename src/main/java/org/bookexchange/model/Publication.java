@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bookexchange.dto.PublicationDto;
 import org.bookexchange.model.enums.PublicationStatus;
 
 @Getter
@@ -14,7 +15,7 @@ import org.bookexchange.model.enums.PublicationStatus;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 
-public class Publication {
+public abstract class Publication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -33,4 +34,5 @@ public class Publication {
     @Enumerated(EnumType.STRING)
     private PublicationStatus status;
 
+    public abstract PublicationDto toDto();
 }

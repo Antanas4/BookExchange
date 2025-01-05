@@ -118,7 +118,7 @@ public class PublicationService {
         if (publication instanceof Book) {
             return "Book";
         } else if (publication instanceof ComicBook) {
-            return "ComicBook";
+            return "Comic Book";
         } else if (publication instanceof Magazine) {
             return "Magazine";
         } else {
@@ -127,15 +127,7 @@ public class PublicationService {
     }
 
     private PublicationDto mapToDto(Publication publication) {
-        PublicationDto dto = new PublicationDto();
-        dto.setId(publication.getId());
-        dto.setTitle(publication.getTitle());
-        dto.setAuthor(publication.getAuthor());
-        dto.setPrice(publication.getPrice());
-        dto.setOwnerUsername(publication.getOwner().getUsername());
-        dto.setStatus(publication.getStatus());
-        dto.setPublicationType(getPublicationType(publication));
-        return dto;
+        return publication.toDto();
     }
 
     private Publication mapToEntity(PublicationDto dto) {

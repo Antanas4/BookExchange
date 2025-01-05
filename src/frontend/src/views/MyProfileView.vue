@@ -373,8 +373,8 @@ const handleDeletePublication = async (publicationId) => {
   }
 };
 
-const openEditDialog = async (publicationToEditData) => {
-  publicationToEdit.value = JSON.parse(JSON.stringify(publicationToEditData));
+const openEditDialog = async (publication) => {
+  publicationToEdit.value = {...publication};
   visibleDialog.value = true;
 }
 
