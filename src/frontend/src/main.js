@@ -1,4 +1,5 @@
 import {createApp} from 'vue';
+import ToastService from 'primevue/toastservice';
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import 'primeicons/primeicons.css';
@@ -17,42 +18,23 @@ import PublicationDetailsView from "@/views/PublicationDetailsView.vue";
 
 "@/service/AuthenticationService"
 
-// const getCurrentUserRoles = async () => {
-//     try {
-//         const response = await axios.get('/api/currentUser/roles');
-//         return response.data || [];
-//     } catch (error) {
-//         console.error("Error fetching user roles:", error);
-//         return [];
-//     }
-// };
-//
-// const isLoggedIn = async () => {
-//     try {
-//         const response = await axios.get('/api/currentUser');
-//         return response.status === 200;
-//     } catch (error) {
-//         return false;
-//     }
-// };
-
 const routes = [
     {
         path: '/users',
         component: ManageUsersView,
-        meta: { requiresRole: 'ROLE_ADMIN' }
+        meta: {requiresRole: 'ROLE_ADMIN'}
     },
     {
         path: '/publications',
         component: ManagePublicationsView,
-        meta: { requiresRole: 'ROLE_ADMIN' }
+        meta: {requiresRole: 'ROLE_ADMIN'}
     },
-    { path: '/client/:ownerUsername', component: ClientDetailsView, props: true },
-    { path: '/publications/about/:id', component: PublicationDetailsView, props: true },
-    { path: '/myProfile/:clientUsername', component: MyProfileView, props: true },
-    { path: '/auth', component: LoginView },
-    { path: '/publications/shop', component: PublicationsShopView },
-    { path: '/403', component: PermissionDeniedView },
+    {path: '/client/:ownerUsername', component: ClientDetailsView, props: true},
+    {path: '/publications/about/:id', component: PublicationDetailsView, props: true},
+    {path: '/myProfile/:clientUsername', component: MyProfileView, props: true},
+    {path: '/auth', component: LoginView},
+    {path: '/publications/shop', component: PublicationsShopView},
+    {path: '/403', component: PermissionDeniedView},
 ];
 
 const router = createRouter({
@@ -88,7 +70,7 @@ app.use(PrimeVue, {
 
         }
     }
-});
-
+},);
+app.use(ToastService);
 app.use(router);
 app.mount('#app');

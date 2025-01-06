@@ -5,10 +5,8 @@ const USERS_URL = 'api/admin/users';
 export const createUser = async (userDto) => {
     try {
         const response = await axios.post(USERS_URL, userDto);
-        console.log("User created", response.data);
         return response.data;
     } catch (error) {
-        console.log(error.message);
         throw new Error('Username is already taken');
     }
 }

@@ -1,6 +1,7 @@
 <template>
   <ClientMenuBar v-if="CurrentUserRole === 'ROLE_CLIENT'"/>
   <AdminMenuBar v-if="CurrentUserRole === 'ROLE_ADMIN'"/>
+  <Toast/>
   <div class="profile-container">
     <h1 class="page-header">{{ clientUsername }}</h1>
     <div class="container">
@@ -51,13 +52,15 @@ import AdminMenuBar from "@/components/AdminMenuBar.vue";
 import ClientMenuBar from "@/components/ClientMenuBar.vue";
 import PublicationForm from "@/components/PublicationForm.vue";
 import MyPublicationsList from "@/components/MyPublicationsList.vue";
+import {useToast} from "primevue/usetoast";
+import Toast from "primevue/toast";
 
 const route = useRoute();
 const clientUsername = route.params.clientUsername;
 const CurrentUserRole = ref('');
 const myPublications = ref([]);
 const borrowedPublications = ref([]);
-
+const toast = useToast();
 const updatePublicationsList = async () => {
   await getMyPublications(myPublications);
 };
@@ -66,7 +69,7 @@ const handleGetMyBorrowedPublications = async () => {
   try {
     await getMyBorrowedPublications(borrowedPublications);
   } catch (error) {
-    console.error('Error fetching borrowed publications:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error fetching borrowed publications', life: 3000 });
   }
 };
 
@@ -74,10 +77,11 @@ const handleReturnPublication = async (publicationId) => {
   try {
     await returnPublication(publicationId);
   } catch (error) {
-    console.error('Error fetching publications:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error returning publication', life: 3000 });
   } finally {
     await getMyPublications();
     await handleGetMyBorrowedPublications();
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Publication returned successfully', life: 3000 });
   }
 };
 
@@ -94,7 +98,7 @@ onMounted(async () => {
       await handleGetMyBorrowedPublications();
     }
   } catch (error) {
-    console.error('Error fetching roles:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error fetching roles', life: 3000 });
   }
 
 });

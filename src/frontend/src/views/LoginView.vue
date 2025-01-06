@@ -1,11 +1,11 @@
 <template>
+  <Toast/>
   <div class="card">
     <DialogMessage
         v-model:visible="showDialog"
         title="Warning"
         message="Login failed. Please try again."
     />
-
     <div class="flex-container">
       <div class="login-section">
         <div class="input-group">
@@ -38,11 +38,13 @@ import { useRouter } from 'vue-router';
 import { ref } from "vue";
 import { login, getCurrentUserRoles } from "@/service/AuthenticationService";
 import DialogMessage from '@/components/DialogMessage.vue';
+import {useToast} from "primevue/usetoast";
 
 const router = useRouter();
 const username = ref('');
 const password = ref('');
 const showDialog = ref(false);
+const toast = useToast();
 
 const handleLogin = async () => {
   const loginRequestDto = {
@@ -63,7 +65,7 @@ const handleLogin = async () => {
       }
     }
   } catch (error) {
-    console.error("Login failed", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Login error', life: 3000 });
     showDialog.value = true;
   }
 };

@@ -1,25 +1,14 @@
 <template>
   <div id="app">
-<!--    <Menubar :model="navLinks">-->
-<!--      <template #end>-->
-<!--        <Button label="Logout" class="p-button-danger" @click="handleLogout"/>-->
-<!--      </template>-->
-<!--    </Menubar>-->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-// import Menubar from 'primevue/menubar';
-// import Button from "primevue/button";
 import axios from "axios";
 
 export default {
   name: 'App',
-  components: {
-    // Menubar,
-    // Button
-  },
   data() {
     return {
       navLinks: [

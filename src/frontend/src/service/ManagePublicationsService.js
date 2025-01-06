@@ -42,7 +42,6 @@ export const deletePublication = async (publicationId) => {
 export const getPublicationsShop = async () => {
     try {
         const response = await axios.get(`${PUBLICATIONS_URL}/shop`);
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error("Error fetching publications: ", error.message);

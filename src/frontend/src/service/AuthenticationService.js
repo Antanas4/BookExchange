@@ -24,6 +24,6 @@ export const login = async (loginRequestDto) => {
         let response = await axios.post('/api/auth/login', loginRequestDto);
         return response.data;
     } catch (error) {
-        console.log("ERROR:", error.message);
+        console.error(error.message);
     }
 };

@@ -1,5 +1,6 @@
 <template>
   <AdminMenuBar/>
+  <Toast/>
   <h1 class="page-header">Manage Users</h1>
   <div class="container">
     <UserForm @user-created="handleGetUsers" :create-user="createUser" />

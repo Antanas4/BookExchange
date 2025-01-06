@@ -1,7 +1,7 @@
 <template>
   <ClientMenuBar v-if="CurrentUserRole === 'ROLE_CLIENT'" />
   <AdminMenuBar v-if="CurrentUserRole === 'ROLE_ADMIN'" />
-
+  <Toast/>
   <div>
     <div class="publication-details-box" v-if="publication">
       <h1>{{ publication.name }}</h1>
@@ -78,6 +78,8 @@ import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { getCurrentUserRoles } from "@/service/AuthenticationService";
 import axios from "axios";
+import {useToast} from "primevue/usetoast";
+import Toast from "primevue/toast";
 
 const CurrentUserRole = ref('');
 const route = useRoute();
@@ -86,6 +88,7 @@ const publication = ref(null);
 const comments = ref([]);
 const showCommentDialog = ref(false);
 const replyingToCommentTitle = ref(null);
+const toast = useToast();
 let newCommentDto = ref({
   title:'',
   body: '',
@@ -111,7 +114,7 @@ onMounted(async () => {
       await fetchComments(publicationId);
     }
   } catch (error) {
-    console.error('Error fetching roles:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error fetching roles.', life: 3000 });
   }
 });
 
@@ -120,7 +123,7 @@ const fetchPublicationDetails = async (publicationId) => {
     const response = await axios.get(`/api/publications/${publicationId}`);
     publication.value = response.data;
   } catch (error) {
-    console.error("Error fetching publication details", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error fetching publication details.', life: 3000 });
   }
 };
 
@@ -141,7 +144,7 @@ const fetchComments = async (publicationId) => {
     const response = await axios.get(`/api/comment/getPublicationComments/${publicationId}`);
     comments.value = response.data;
   } catch (error) {
-    console.error("Error fetching comments", error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error fetching comments', life: 3000 });
   }
 };
 
@@ -152,10 +155,9 @@ const submitComment = async () => {
     newCommentDto.value.publicationId = publicationId;
     await axios.post('/api/comment/addComment', newCommentDto.value);
     showCommentDialog.value = false;
-    console.log(newCommentDto.value);
     await fetchComments(publicationId);
   } catch (error) {
-    console.error('Error submitting comment:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error submitting comment.', life: 3000 });
   }
 };
 </script>

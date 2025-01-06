@@ -1,7 +1,7 @@
 <template>
   <ClientMenuBar v-if="CurrentUserRole === 'ROLE_CLIENT'" />
   <AdminMenuBar v-if="CurrentUserRole === 'ROLE_ADMIN'" />
-
+  <Toast/>
   <div class="card">
     <DataView :value="publications" paginator :rows="5">
       <template #list="slotProps">
@@ -53,7 +53,6 @@
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </template>
@@ -71,15 +70,16 @@ import {borrowPublication, buyPublication, getPublicationsShop} from '@/service/
 import ClientMenuBar from "@/components/ClientMenuBar.vue";
 import AdminMenuBar from "@/components/AdminMenuBar.vue";
 import {getCurrentUserRoles} from "@/service/AuthenticationService";
+import {useToast} from "primevue/usetoast";
+import Toast from 'primevue/toast';
 
 const publications = ref([]);
 const CurrentUserRole = ref('');
+const toast = useToast();
 
 onMounted(async () => {
   try {
     publications.value = await getPublicationsShop();
-    console.log(publications.value);
-
     const roles = await getCurrentUserRoles();
     if (roles.includes('ROLE_CLIENT')) {
       CurrentUserRole.value = 'ROLE_CLIENT';
@@ -87,7 +87,7 @@ onMounted(async () => {
       CurrentUserRole.value = 'ROLE_ADMIN';
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error fetching data', life: 3000 });
   }
 });
 
@@ -95,8 +95,9 @@ const handleBuyPublication = async (publication) => {
   try {
     await buyPublication(publication);
     publications.value = await getPublicationsShop();
+    toast.add({ severity: 'success', summary: 'Success Message', detail: 'Publication bought successfully', life: 3000 });
   } catch (error) {
-    console.error('Error buying publications:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error buying publication', life: 3000 });
   }
 }
 
@@ -104,8 +105,9 @@ const handleBorrowPublication = async (publication) => {
   try {
     await borrowPublication(publication);
     publications.value = await getPublicationsShop();
+    toast.add({ severity: 'success', summary: 'Success Message', detail: 'Publication borrowed successfully', life: 3000 });
   } catch (error) {
-    console.error('Error borrowing publications:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error borrowing publication', life: 3000 });
   }
 }
 </script>
@@ -151,7 +153,7 @@ const handleBorrowPublication = async (publication) => {
 .label {
   font-weight: bold;
   margin-right: 5px;
-  width: 80px; /* Adjust width for consistent alignment */
+  width: 80px;
 }
 
 .value {
