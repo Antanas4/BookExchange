@@ -54,17 +54,7 @@
 
   <div class="card-publication-list">
     <h2 class="card-header">My Publications</h2>
-    <AutoComplete
-        v-model="filteredTypeForTable"
-        :suggestions="filteredTypes"
-        @complete="searchTypes"
-        :virtualScrollerOptions="{ itemSize: 38 }"
-        optionLabel="label"
-        dropdown
-        forceSelection
-        placeholder="Select Publication Type"
-    />
-    <DataTable :value="filteredPublications" tableStyle="min-width: 50rem">
+    <DataTable :value="publications" tableStyle="min-width: 50rem">
       <Column field="author" header="Author"/>
       <Column field="title" header="Title"/>
       <Column field="publicationType" header="Publication Type"/>
@@ -86,7 +76,6 @@
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
-import AutoComplete from "primevue/autocomplete";
 import {computed, onMounted, ref, defineProps} from "vue";
 import Dialog from "primevue/dialog";
 import InputText from "primevue/inputtext";
@@ -105,13 +94,6 @@ const publicationToEdit = ref(null);
 const visibleDialog = ref(false);
 const showDialog = ref(false);
 const dialogMessage = ref('');
-const filteredTypeForTable = ref(null);
-const filteredTypes = ref([]);
-const publicationTypes = [
-  {label: 'Book'},
-  {label: 'Magazine'},
-  {label: 'Comic Book'}
-];
 
 defineProps({
   publications: {
@@ -121,15 +103,6 @@ defineProps({
 });
 
 const publications = ref([]);
-
-const searchTypes = (event) => {
-  filteredTypes.value = publicationTypes.filter(type =>
-      type.label.toLowerCase().includes(event.query.toLowerCase()));
-}
-const filteredPublications = computed(() => {
-  if (!filteredTypeForTable.value) return publications.value;
-  return publications.value.filter(pub => pub.publicationType === filteredTypeForTable.value.label);
-});
 
 const isDialogValid = computed(() => {
   const noWarnings = Object.values(dialogInputWarning.value).every(message => !message);
