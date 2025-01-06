@@ -133,7 +133,7 @@ public class PublicationService {
     private Publication mapToEntity(PublicationDto dto) {
         Publication publication = switch (dto.getPublicationType().toUpperCase()) {
             case "BOOK" -> new Book(dto.getGenre());
-            case "COMIC_BOOK" -> new ComicBook(dto.getIllustrator());
+            case "COMIC BOOK" -> new ComicBook(dto.getIllustrator());
             case "MAGAZINE" -> new Magazine(dto.getIssueNumber());
             default -> throw new IllegalArgumentException("Unsupported publication type: " + dto.getPublicationType());
         };
