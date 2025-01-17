@@ -58,11 +58,11 @@ import Toast from "primevue/toast";
 const route = useRoute();
 const clientUsername = route.params.clientUsername;
 const CurrentUserRole = ref('');
-const myPublications = ref([]);
+const myPublications = ref();
 const borrowedPublications = ref([]);
 const toast = useToast();
 const updatePublicationsList = async () => {
-  await getMyPublications(myPublications);
+  myPublications.value = await getMyPublications();
 };
 
 const handleGetMyBorrowedPublications = async () => {
@@ -79,7 +79,7 @@ const handleReturnPublication = async (publicationId) => {
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Error returning publication', life: 3000 });
   } finally {
-    await getMyPublications();
+    myPublications.value = await getMyPublications();
     await handleGetMyBorrowedPublications();
     toast.add({ severity: 'success', summary: 'Success', detail: 'Publication returned successfully', life: 3000 });
   }
@@ -94,7 +94,7 @@ onMounted(async () => {
       CurrentUserRole.value = 'ROLE_ADMIN';
     }
     if (clientUsername) {
-      await updatePublicationsList();
+      myPublications.value = await getMyPublications();
       await handleGetMyBorrowedPublications();
     }
   } catch (error) {

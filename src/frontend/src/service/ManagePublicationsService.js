@@ -70,10 +70,10 @@ export const returnPublication = async (publicationId) => {
     }
 };
 
-export const getMyPublications = async (myPublications) =>{
+export const getMyPublications = async () =>{
     try{
         const response = await axios.get(`${PUBLICATIONS_URL}/myPublications`);
-        myPublications.value = response.data;
+        return response.data;
     } catch (error){
         console.error(error.message);
     }

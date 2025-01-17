@@ -183,7 +183,7 @@ const handleDeletePublication = async (publicationId) => {
 
 const handleGetMyPublications = async () => {
   try {
-    await getMyPublications(publications);
+    publications.value = await getMyPublications();
   } catch (error) {
     console.error('Error fetching my publications:', error);
   }
